@@ -1,4 +1,4 @@
-package calendar
+package obj_calendar
 
 import (
 	"fmt"
