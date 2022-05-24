@@ -1,0 +1,27 @@
+
+body,
+html{
+	width: 100%;
+	height: 100%;
+	font-family: 'Tinos', sans-serif;
+	background: url(background1.jpg) no-repeat center center fixed; 
+	  -webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: contain;
+}
+h1{
+	font-size: 3rem;
+}
+.container{
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 1fr 1fr 0.5fr;
+	grid-template-rows: 80px 80px 80px; 
+	column-gap: 10px;
+	row-gap: 15px;
+	text-align: center;
+}
+
+.item{
+	font-size: 2rem;
+}
