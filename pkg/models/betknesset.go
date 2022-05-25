@@ -147,4 +147,12 @@ func GetSynagogues() *[]Synagogue {
 	return &synagogues
 }
 
-func GetDayTimesById()
+func GetTimesJsonByNamePassword(name string, pass string) *string {
+	var getTimeJson string
+	for _, item := range synagogues {
+		if name == item.Name && pass == item.Key {
+			getTimeJson = item.ConfigRequest
+		}
+	}
+	return &getTimeJson
+}
