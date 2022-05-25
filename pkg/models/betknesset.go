@@ -1,7 +1,10 @@
 package betknesset
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 )
 
 type Betknesset struct {
@@ -10,8 +13,69 @@ type Betknesset struct {
 	Name     string
 }
 
-var betknesset Betknesset
+type Synagogue struct {
+	Name          string `json:"name"`
+	Key           string `json:"key"`
+	ConfigRequest string `json:"request"`
+}
 
+var synagogues []Synagogue
+
+//var betknesset Betknesset
+
+func InitSynagogues() {
+	/*
+		s := []Synagogue{{Name: "shuva_raanana", Key: "123456"}, {Name: "bentata", Key: "654321"}}
+		sBytes, err := json.Marshal(s)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		log.Println(string(sBytes))
+
+		jsonRawmsg := json.RawMessage(sBytes)
+		fmt.Println(jsonRawmsg)
+		var s1 Synagogue
+		err1 := json.Unmarshal(jsonRawmsg, &s1)
+		if err1 != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(s1)
+	*/
+	// WORKING CODE --- GET ALL THE ACTIVE SYNAGOGUES FROM THE FILE
+	filename := "./files/synagogues/synagogues.txt"
+	bFile2, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//fmt.Println(string(bFile2))
+	err = json.Unmarshal(bFile2, &synagogues)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("Synagogues: %v\n\n", synagogues)
+	/*
+		for _, item := range synagogues {
+			fmt.Println(item)
+		}
+	*/
+	/*
+
+		err := filepath.Walk(".",
+			func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+				fmt.Println(path, info.Size())
+				return nil
+			})
+		if err != nil {
+			log.Println(err)
+		}
+	*/
+
+}
+
+/*
 func init() {
 	//Note the following customizable parameters and their meanings:
 	params := []string{"https://www.hebcal.com/hebcal?"}
@@ -73,7 +137,13 @@ func init() {
 	betknesset.Url = url
 	//{"title":"Candle lighting: 7:25pm","date":"2022-06-03T19:25:00+03:00","category":"candles","title_orig":"Candle lighting","hebrew":"הדלקת נרות","memo":"Parashat Bamidbar"}
 }
-
+*/
+/*
 func GetBetknesset() *Betknesset {
 	return &betknesset
+}
+*/
+
+func GetSynagogues() *[]Synagogue {
+	return &synagogues
 }
