@@ -1,14 +1,14 @@
-package models
+package betknesset
 
 import (
 	"fmt"
 )
 
-type Calendar struct {
-	url string
+type Synagogues struct {
+	ListSynagogues []string
 }
 
-var calendar Calendar
+var synagogues Synagogues
 
 func init() {
 	//Note the following customizable parameters and their meanings:
@@ -66,12 +66,11 @@ func init() {
 	for _, item := range params {
 		url = url + item
 	}
-
 	fmt.Println(url)
-	calendar.url = url
+	//synagogues =
 	//{"title":"Candle lighting: 7:25pm","date":"2022-06-03T19:25:00+03:00","category":"candles","title_orig":"Candle lighting","hebrew":"הדלקת נרות","memo":"Parashat Bamidbar"}
 }
 
-func GetCalendar() *Calendar {
-	return &calendar
+func GetSynagogues() *Synagogues {
+	return &synagogues
 }

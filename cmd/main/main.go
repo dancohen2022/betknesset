@@ -1,9 +1,12 @@
 package main
 
 import (
-	"github.com/dancohen2022/betknesset/pkg/models"
+	betknesset "github.com/dancohen2022/betknesset/pkg/models"
 )
 
 func main() {
-	models.GetCalendar()
+	// Get synagogs list
+
+	//
+	betknesset.GetBetknesset()
 }
