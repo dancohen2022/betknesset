@@ -3,15 +3,13 @@ package main
 import (
 	"fmt"
 
-	betknesset "github.com/dancohen2022/betknesset/pkg/models"
+	"github.com/dancohen2022/betknesset/pkg/models"
 )
 
 func main() {
 	// Get synagogs list
-
+	models.InitSynagogues()
 	//
-
-	betknesset.InitSynagogues()
 
 	fmt.Println("End Main")
 }

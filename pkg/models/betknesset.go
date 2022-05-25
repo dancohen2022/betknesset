@@ -1,4 +1,4 @@
-package betknesset
+package models
 
 import (
 	"encoding/json"
@@ -8,9 +8,8 @@ import (
 )
 
 type Betknesset struct {
-	Url      string
-	JsonInfo string
 	Name     string
+	JsonInfo string
 }
 
 type Synagogue struct {
@@ -147,3 +146,5 @@ func GetBetknesset() *Betknesset {
 func GetSynagogues() *[]Synagogue {
 	return &synagogues
 }
+
+func GetDayTimesById()
