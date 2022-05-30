@@ -8,13 +8,12 @@ import (
 )
 
 type Betknesset struct {
-	Name     string
-	JsonInfo string
+	Name string `json:"name"`
+	Key  string `json:"key"`
 }
 
 type Synagogue struct {
-	Name          string `json:"name"`
-	Key           string `json:"key"`
+	Betknesset    *Betknesset
 	ConfigRequest string `json:"request"`
 }
 
@@ -150,7 +149,7 @@ func GetSynagogues() *[]Synagogue {
 func GetTimesJsonByNamePassword(name string, pass string) *string {
 	var getTimeJson string
 	for _, item := range synagogues {
-		if name == item.Name && pass == item.Key {
+		if name == item.Betknesset.Name && pass == item.Betknesset.Name {
 			getTimeJson = item.ConfigRequest
 		}
 	}

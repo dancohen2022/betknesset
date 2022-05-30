@@ -1,12 +1,7 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
-	routes "github.com/dancohen2022/betknesset/pkg/calendar-routes"
 	"github.com/dancohen2022/betknesset/pkg/models"
-	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -14,8 +9,11 @@ func main() {
 	models.InitSynagogues()
 	//
 
-	r := mux.NewRouter()
-	routes.RegisterBetknessetRoutes(r)
-	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe("localhost:9010", r))
+	models.CreateDir("test")
+	/*
+		r := mux.NewRouter()
+		routes.RegisterBetknessetRoutes(r)
+		http.Handle("/", r)
+		log.Fatal(http.ListenAndServe("localhost:9010", r))
+	*/
 }
