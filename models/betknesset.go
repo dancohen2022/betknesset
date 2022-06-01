@@ -143,6 +143,7 @@ func GetBetknesset() *Betknesset {
 */
 
 func GetSynagogues() *[]Synagogue {
+	fmt.Printf("synagogues: %v", synagogues)
 	return &synagogues
 }
 

@@ -1,4 +1,4 @@
-package betknesset
+package models
 
 import (
 	"fmt"

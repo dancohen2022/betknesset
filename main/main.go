@@ -1,17 +1,18 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
-	"github.com/dancohen2022/betknesset"
+	"github.com/dancohen2022/betknesset/models"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	InitSynagogues()
+	models.InitSynagogues()
 
 	go handler()
 
@@ -58,8 +59,17 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 	fmt.Printf("req req.URL.Path:%s, %s\n", req.FormValue("name"), req.FormValue("key"))
 	name := req.FormValue("name")
 	key := req.FormValue("key")
+	resString := ""
+	s, err := SynagogueExist(name, key)
+	if err != nil {
+		resString = resString + fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
+		resString = resString + "Synagogue dowsn't exist\n"
+		res.Write([]byte(resString))
+		return
+	}
 
-	resString := fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
+	resString = fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
+	resString = fmt.Sprintf("Synagogue %s", s)
 
 	link := "https://www.hebcal.com/"
 	json := "hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname&geonameid=3448439&M=on&s=on"
@@ -69,11 +79,17 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 
 }
 
-func SynagogueExist(name, key string) {
-	syn := &betknesset.GetSynagogues()
+func SynagogueExist(name, key string) (models.Betknesset, error) {
+	syn := *models.GetSynagogues()
+	var b models.Betknesset
 	for _, s := range syn {
-
+		if s.Betknesset.Name == name && s.Betknesset.Key == key {
+			b.Key = s.Betknesset.Key
+			b.Name = s.Betknesset.Name
+			return b, nil
+		}
 	}
+	return b, errors.New("Synagogue doesn't exist")
 }
 
 func GetSynagogueHttpJson(link, json string) string {
