@@ -7,70 +7,121 @@ import (
 	"log"
 )
 
-type Betknesset struct {
-	Name string `json:"name"`
-	Key  string `json:"key"`
+type Synagogue struct {
+	Name        string `json:"name"`
+	Key         string `json:"key"`
+	CalendarApi string `json:"calendar"`
+	ZmanimApi   string `json:"zmanim"`
 }
 
-type Synagogue struct {
-	Betknesset    *Betknesset
-	ConfigRequest string `json:"request"`
+type CalendarJson struct {
+	Title    string           `json:"title"`
+	Date     string           `json:"date"`
+	Location CalendarLocation `json:"location"`
+	Range    CalendarRange    `json:"range"`
+	Items    []CalendarItems  `json:"items"`
+}
+
+type CalendarLocation struct {
+	Title     string `json:"title"`
+	City      string `json:"city"`
+	Tzid      string `json:"tzid"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
+}
+
+type CalendarRange struct {
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
+type CalendarItems struct {
+	Title     string          `json:"title"`
+	Date      string          `json:"date"`
+	Hdate     string          `json:"hdate"`
+	Category  string          `json:"category"`
+	Hebrew    string          `json:"hebrew"`
+	Memo      string          `json:"memo"`
+	Leyning   CalendarLeyning `json:"leyning"`
+	Link      string          `json:"link"`
+	TitleOrig string          `json:"title_orig"`
+	Subcat    string          `json:"subcat"`
+	Yomtov    bool            `json:"yomtov"`
+}
+type CalendarLeyning struct {
+	L1       string `json:"1"`
+	L2       string `json:"2"`
+	L3       string `json:"3"`
+	L4       string `json:"4"`
+	L5       string `json:"5"`
+	L6       string `json:"6"`
+	L7       string `json:"7"`
+	Torah    string `json:"torah"`
+	Haftarah string `json:"haftarah"`
+	Maftir   string `json:"maftir"`
+}
+
+type ZmanimJson struct {
+	Date     ZmanimDate     `json:"date"`
+	Location ZmanimLocation `json:"location"`
+	Times    ZmanimTimes    `json:"times"`
+}
+
+type ZmanimDate struct {
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
+
+type ZmanimLocation struct {
+	Name      string `json:"name"`
+	Il        bool   `json:"il"`
+	Tzid      string `json:"tzid"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
+}
+
+type ZmanimTimes struct {
+	ChatzotNight      []string `json:"chatzotNight"`
+	AlotHaShachar     []string `json:"alotHaShachar"`
+	Misheyakir        []string `json:"misheyakir"`
+	MisheyakirMachmir []string `json:"misheyakirMachmir"`
+	Dawn              []string `json:"dawn"`
+	Sunrise           []string `json:"sunrise"`
+	SofZmanShma       []string `json:"sofZmanShma"`
+	SofZmanShmaMGA    []string `json:"sofZmanShmaMGA"`
+	SofZmanTfilla     []string `json:"sofZmanTfilla"`
+	SofZmanTfillaMGA  []string `json:"sofZmanTfillaMGA"`
+	Chatzot           []string `json:"chatzot"`
+	MinchaGedola      []string `json:"minchaGedola"`
+	MinchaKetana      []string `json:"minchaKetana"`
+	PlagHaMincha      []string `json:"plagHaMincha"`
+	Sunset            []string `json:"sunset"`
+	Dusk              []string `json:"dusk"`
+	Tzeit7083deg      []string `json:"tzeit7083deg"`
+	Tzeit85deg        []string `json:"tzeit85deg"`
+	Tzeit42min        []string `json:"tzeit42min"`
+	Tzeit50min        []string `json:"tzeit50min"`
+	Tzeit72min        []string `json:"tzeit72min"`
 }
 
 var synagogues []Synagogue
 
-//var betknesset Betknesset
-
 func InitSynagogues() {
-	/*
-		s := []Synagogue{{Name: "shuva_raanana", Key: "123456"}, {Name: "bentata", Key: "654321"}}
-		sBytes, err := json.Marshal(s)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		log.Println(string(sBytes))
-
-		jsonRawmsg := json.RawMessage(sBytes)
-		fmt.Println(jsonRawmsg)
-		var s1 Synagogue
-		err1 := json.Unmarshal(jsonRawmsg, &s1)
-		if err1 != nil {
-			log.Fatalln(err)
-		}
-		fmt.Println(s1)
-	*/
-	// WORKING CODE --- GET ALL THE ACTIVE SYNAGOGUES FROM THE FILE
 	filename := "./files/synagogues/synagogues.txt"
 	bFile2, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	//fmt.Println(string(bFile2))
 	err = json.Unmarshal(bFile2, &synagogues)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	fmt.Printf("Synagogues: %v\n\n", synagogues)
-	/*
-		for _, item := range synagogues {
-			fmt.Println(item)
-		}
-	*/
-	/*
+}
 
-		err := filepath.Walk(".",
-			func(path string, info os.FileInfo, err error) error {
-				if err != nil {
-					return err
-				}
-				fmt.Println(path, info.Size())
-				return nil
-			})
-		if err != nil {
-			log.Println(err)
-		}
-	*/
-
+func GetSynagogues() *[]Synagogue {
+	fmt.Printf("synagogues: %v", synagogues)
+	return &synagogues
 }
 
 /*
@@ -141,18 +192,3 @@ func GetBetknesset() *Betknesset {
 	return &betknesset
 }
 */
-
-func GetSynagogues() *[]Synagogue {
-	fmt.Printf("synagogues: %v", synagogues)
-	return &synagogues
-}
-
-func GetTimesJsonByNamePassword(name string, pass string) *string {
-	var getTimeJson string
-	for _, item := range synagogues {
-		if name == item.Betknesset.Name && pass == item.Betknesset.Name {
-			getTimeJson = item.ConfigRequest
-		}
-	}
-	return &getTimeJson
-}
