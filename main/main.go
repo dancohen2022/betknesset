@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/dancohen2022/betknesset/models"
 	"github.com/gorilla/mux"
@@ -109,16 +112,13 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 		resString = resString + "Synagogue dowsn't exist\n"
 	} else {
 
-		resString = fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
-		resString = fmt.Sprintf("Synagogue %s", s)
-
 		calend := s.CalendarApi
 		zman := s.ZmanimApi
 
 		UpdateDirs(name)
-		//UpdateFiles(name)
+		UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman))
 
-		resString = resString + GetSynagogueHttpJson(calend) + "\n\n\n\n" + GetSynagogueHttpJson(zman)
+		resString = fmt.Sprintf("Synagogue %s has been updated", s)
 	}
 	res.Write([]byte(resString))
 
@@ -141,6 +141,19 @@ func SynagogueExist(name, key string) (models.Synagogue, error) {
 }
 
 func GetSynagogueHttpJson(link string) string {
+	//Files limited period
+	const PERIOD int = 14
+	bStart := []byte(time.Now().String())
+	bStart = bStart[:11]
+	bEnd := []byte(time.Now().AddDate(0, 0, PERIOD).String())
+	bEnd = bEnd[:11]
+	//YYYY-MM-DD
+	periodStart := fmt.Sprintf("start=%s", bStart)
+	periodEnd := fmt.Sprintf("end=%s", bEnd)
+	strings.Replace(link, "year=now", periodStart+"&"+periodEnd, 3)
+	fmt.Printf("period start - %s - , period end - %s -\n", periodStart, periodEnd)
+	fmt.Printf("link - %s\n", link)
+
 	resp, err := http.Get(link)
 	if err != nil {
 		panic(err)
@@ -159,6 +172,23 @@ func UpdateDirs(name string) {
 	}
 }
 
-func UpdateFiles(name string) {
+func UpdateFiles(name, calend, zman string) {
+	/*
+		1. Delete all existing files.
+		2. Update files for 14 days
+		3.Start today / End today + 14
+
+	*/
+
+	//Update files for 3 months.
+
+	v := models.ZmanimJson{}
+	err := json.Unmarshal([]byte(zman), &v)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("v: %v\n\n", v)
+	fmt.Printf("V chatzot %v\n\n", v.Times.Chatzot)
+
 	//get new JSON, parse and create new files
 }
