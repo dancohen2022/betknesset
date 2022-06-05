@@ -112,8 +112,8 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 		resString = resString + "Synagogue dowsn't exist\n"
 	} else {
 
-		calend := s.CalendarApi
-		zman := s.ZmanimApi
+		calend := UpdateApiParams(s.CalendarApi)
+		zman := UpdateApiParams(s.ZmanimApi)
 
 		UpdateDirs(name)
 		UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman))
@@ -121,6 +121,28 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 		resString = fmt.Sprintf("Synagogue %s has been updated", s)
 	}
 	res.Write([]byte(resString))
+
+}
+
+func UpdateApiParams(api string) string {
+	//Files limited period
+	const PERIOD int = 14
+	bStart := []byte(time.Now().String())
+	bStart = bStart[:11]
+	bEnd := []byte(time.Now().AddDate(0, 0, PERIOD).String())
+	bEnd = bEnd[:11]
+	//YYYY-MM-DD
+	periodStart := strings.TrimSpace(fmt.Sprintf("start=%s", bStart))
+	fmt.Printf("periodStart: %s\n", periodStart)
+	periodEnd := strings.TrimSpace(fmt.Sprintf("end=%s", bEnd))
+	fmt.Printf("periodEnd: %s\n", periodEnd)
+	newPeriod := strings.TrimSpace(fmt.Sprintf("%s&%s", periodStart, periodEnd))
+	fmt.Printf("newPeriod: %s\n", newPeriod)
+	newApi := strings.TrimSpace(strings.Replace(api, "year=now", "", 3))
+	newApi = newApi + newPeriod
+
+	fmt.Printf("newApi: %s\n", newApi)
+	return newApi
 
 }
 
@@ -141,17 +163,6 @@ func SynagogueExist(name, key string) (models.Synagogue, error) {
 }
 
 func GetSynagogueHttpJson(link string) string {
-	//Files limited period
-	const PERIOD int = 14
-	bStart := []byte(time.Now().String())
-	bStart = bStart[:11]
-	bEnd := []byte(time.Now().AddDate(0, 0, PERIOD).String())
-	bEnd = bEnd[:11]
-	//YYYY-MM-DD
-	periodStart := fmt.Sprintf("start=%s", bStart)
-	periodEnd := fmt.Sprintf("end=%s", bEnd)
-	strings.Replace(link, "year=now", periodStart+"&"+periodEnd, 3)
-	fmt.Printf("period start - %s - , period end - %s -\n", periodStart, periodEnd)
 	fmt.Printf("link - %s\n", link)
 
 	resp, err := http.Get(link)
@@ -175,12 +186,7 @@ func UpdateDirs(name string) {
 func UpdateFiles(name, calend, zman string) {
 	/*
 		1. Delete all existing files.
-		2. Update files for 14 days
-		3.Start today / End today + 14
-
 	*/
-
-	//Update files for 3 months.
 
 	v := models.ZmanimJson{}
 	err := json.Unmarshal([]byte(zman), &v)
