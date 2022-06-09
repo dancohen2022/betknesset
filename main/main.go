@@ -14,6 +14,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const PERIOD int = 14
+
 func main() {
 	models.InitSynagogues()
 	models.InitSynagoguesPath()
@@ -34,7 +36,7 @@ func handler() {
 	//mux.HandleFunc("/login", UserPage).Methods("GET")
 	//mux.HandleFunc("/login", UpdateUser).Methods("POST")
 	mux.HandleFunc("/admin", AdminPage).Methods("GET")
-	mux.HandleFunc("/admin", UpdateSynagogues).Methods("POST")
+	//mux.HandleFunc("/admin", UpdateSynagogues).Methods("POST")
 
 	log.Fatal(http.ListenAndServe("localhost:8080", mux))
 }
@@ -75,8 +77,12 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 		resString = fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
 		resString = fmt.Sprintf("Synagogue %s", s)
 
-		calend := s.CalendarApi
-		zman := s.ZmanimApi
+		calend := UpdateApiParams(s.CalendarApi)
+		zman := UpdateApiParams(s.ZmanimApi)
+
+		UpdateDirs(name)
+
+		UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman))
 
 		resString = resString + GetSynagogueHttpJson(calend) + "\n\n\n\n" + GetSynagogueHttpJson(zman)
 	}
@@ -102,6 +108,7 @@ func AdminPage(res http.ResponseWriter, req *http.Request) {
 
 }
 
+/*
 func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	res.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -114,14 +121,17 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 		resString = resString + fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
 		resString = resString + "Synagogue dowsn't exist\n"
 	} else {
-		fmt.Println("Synagogue Exist and start update files")
-
-		calend := UpdateApiParams(s.CalendarApi)
-		zman := UpdateApiParams(s.ZmanimApi)
+		fmt.Printf("Synagogue Exist and start update files\n\n\n")
+		cal_api := s.CalendarApi
+		zmn_api := s.ZmanimApi
+		calend := UpdateApiParams(cal_api)
+		zman := UpdateApiParams(zmn_api)
 		fmt.Printf("calend: %s\n\n\n", calend)
 		fmt.Printf("zman: %s\n\n\n", zman)
 
+		fmt.Printf("name: %s\n\n\n", name)
 		UpdateDirs(name)
+
 		UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman))
 
 		resString = fmt.Sprintf("Synagogue %s has been updated", s)
@@ -129,34 +139,30 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 	res.Write([]byte(resString))
 
 }
+*/
 
 func UpdateApiParams(api string) string {
 	fmt.Println("UpdateApiParams")
 	//Files limited period
-	const PERIOD int = 14
 
 	bStart := DateFormat(time.Now().String())
 	bEnd := DateFormat(time.Now().AddDate(0, 0, PERIOD).String())
 	periodStart := strings.TrimSpace(fmt.Sprintf("start=%s", bStart))
 	periodEnd := fmt.Sprintf("end=%s", bEnd)
-	newPeriod := fmt.Sprintf("%s&%s", periodStart, periodEnd)
-	newApi := strings.Replace(api, "year=now", "", 3)
-	newApi = strings.TrimSpace(newApi + newPeriod)
-	fmt.Printf("newApi: %s\n", newApi)
+	newPeriod := fmt.Sprintf("&%s&%s", periodStart, periodEnd)
+	newApi := strings.Replace(api, "&year=now", "", 3)
+	newApiTrimes := strings.TrimSpace(newApi + newPeriod)
 
-	fmt.Printf("newApi: %s\n", newApi)
-	return newApi
+	return newApiTrimes
 
 }
 
 func DateFormat(dateString string) string {
 	//YYYY-MM-DD
 	fmt.Println("DateFormat")
-	fmt.Printf("dateString: %s\n\n\n", dateString)
 	d := []byte(dateString)
 	d = d[:11]
 	s := string(d)
-	fmt.Printf("s: %s\n\n\n", s)
 	return s
 }
 
@@ -166,15 +172,10 @@ func SynagogueExist(name, key string) (models.Synagogue, error) {
 	b := models.Synagogue{}
 	for _, s := range syn {
 		if (s.Name == name) && (s.Key == key) {
-			fmt.Printf("Synagogue exist: %v\n\n\n", s)
 			b.Key = s.Key
-			fmt.Printf("b.Key: %v\n\n\n", b.Key)
 			b.Name = s.Name
-			fmt.Printf("b.Name: %v\n\n\n", b.Name)
 			b.CalendarApi = s.CalendarApi
-			fmt.Printf("b.CalendarApi: %v\n\n\n", b.CalendarApi)
 			b.ZmanimApi = s.ZmanimApi
-			fmt.Printf("b.ZmanimApi: %v\n\n\n", b.ZmanimApi)
 			return b, nil
 		}
 	}
@@ -183,7 +184,6 @@ func SynagogueExist(name, key string) (models.Synagogue, error) {
 
 func GetSynagogueHttpJson(link string) string {
 	fmt.Println("GetSynagogueHttpJson")
-	fmt.Printf("link - %s\n", link)
 
 	resp, err := http.Get(link)
 	if err != nil {
