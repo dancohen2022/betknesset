@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+// Registered Synagogues Info
 type Synagogue struct {
 	Name        string `json:"name"`
 	Key         string `json:"key"`
@@ -14,6 +15,25 @@ type Synagogue struct {
 	ZmanimApi   string `json:"zmanim"`
 }
 
+// Final Daily Schedules
+type DailyScheduleJson struct {
+	Title      string      `json:"title"`
+	Date       string      `json:"date"`
+	Hdate      string      `json:"hdate"`
+	DailyItems []DailyItem `json:"dailyitems"`
+}
+
+type DailyItem struct {
+	Name     string `json:"title"`
+	Date     string `json:"date"`
+	Hebrew   string `json:"hebrew"`
+	Category string `json:"category"` //tfila, shiour
+	Subcat   string `json:"subcat"`   //fast
+	Time     string `json:"time"`
+	Memo     string `json:"memo"`
+}
+
+// Parse Calendar API results
 type CalendarJson struct {
 	Title    string           `json:"title"`
 	Date     string           `json:"date"`
@@ -79,6 +99,7 @@ type CalendarLeyning struct {
 	Maftir   string `json:"maftir"`
 }
 
+// Parse Zmanim API results
 type ZmanimJson struct {
 	Date     ZmanimDate     `json:"date"`
 	Location ZmanimLocation `json:"location"`
@@ -99,33 +120,37 @@ type ZmanimLocation struct {
 }
 
 type ZmanimTimes struct {
-	ChatzotNight      interface{} `json:"chatzotNight"`
-	AlotHaShachar     interface{} `json:"alotHaShachar"`
-	Misheyakir        interface{} `json:"misheyakir"`
-	MisheyakirMachmir interface{} `json:"misheyakirMachmir"`
-	Dawn              interface{} `json:"dawn"`
-	Sunrise           interface{} `json:"sunrise"`
-	SofZmanShma       interface{} `json:"sofZmanShma"`
-	SofZmanShmaMGA    interface{} `json:"sofZmanShmaMGA"`
-	SofZmanTfilla     interface{} `json:"sofZmanTfilla"`
-	SofZmanTfillaMGA  interface{} `json:"sofZmanTfillaMGA"`
-	Chatzot           interface{} `json:"chatzot"`
-	MinchaGedola      interface{} `json:"minchaGedola"`
-	MinchaKetana      interface{} `json:"minchaKetana"`
-	PlagHaMincha      interface{} `json:"plagHaMincha"`
-	Sunset            interface{} `json:"sunset"`
-	Dusk              interface{} `json:"dusk"`
-	Tzeit7083deg      interface{} `json:"tzeit7083deg"`
-	Tzeit85deg        interface{} `json:"tzeit85deg"`
-	Tzeit42min        interface{} `json:"tzeit42min"`
-	Tzeit50min        interface{} `json:"tzeit50min"`
-	Tzeit72min        interface{} `json:"tzeit72min"`
+	ChatzotNight      map[string]string `json:"chatzotNight"`
+	AlotHaShachar     map[string]string `json:"alotHaShachar"`
+	Misheyakir        map[string]string `json:"misheyakir"`
+	MisheyakirMachmir map[string]string `json:"misheyakirMachmir"`
+	Dawn              map[string]string `json:"dawn"`
+	Sunrise           map[string]string `json:"sunrise"`
+	SofZmanShma       map[string]string `json:"sofZmanShma"`
+	SofZmanShmaMGA    map[string]string `json:"sofZmanShmaMGA"`
+	SofZmanTfilla     map[string]string `json:"sofZmanTfilla"`
+	SofZmanTfillaMGA  map[string]string `json:"sofZmanTfillaMGA"`
+	Chatzot           map[string]string `json:"chatzot"`
+	MinchaGedola      map[string]string `json:"minchaGedola"`
+	MinchaKetana      map[string]string `json:"minchaKetana"`
+	PlagHaMincha      map[string]string `json:"plagHaMincha"`
+	Sunset            map[string]string `json:"sunset"`
+	Dusk              map[string]string `json:"dusk"`
+	Tzeit7083deg      map[string]string `json:"tzeit7083deg"`
+	Tzeit85deg        map[string]string `json:"tzeit85deg"`
+	Tzeit42min        map[string]string `json:"tzeit42min"`
+	Tzeit50min        map[string]string `json:"tzeit50min"`
+	Tzeit72min        map[string]string `json:"tzeit72min"`
 }
+
 type ZmanimTimeItem struct {
 	ShortDate string
 	LongDate  string
 }
 
+// End of Structures
+
+// Synagogues List
 var synagogues []Synagogue
 
 func InitSynagogues() {
@@ -138,10 +163,10 @@ func InitSynagogues() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Printf("Synagogues: %v\n\n", synagogues)
+	fmt.Printf("Synagogues: %v\n\n\n", synagogues)
 }
 
 func GetSynagogues() *[]Synagogue {
-	fmt.Printf("synagogues: %v", synagogues)
+	fmt.Printf("synagogues: %v\n\n\n", synagogues)
 	return &synagogues
 }

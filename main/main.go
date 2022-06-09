@@ -20,6 +20,7 @@ func main() {
 
 	go handler()
 
+	//Development Process Exit
 	log.Println("Server started, press <ENTER> to exit")
 	fmt.Scanln()
 
@@ -30,6 +31,8 @@ func handler() {
 
 	mux.HandleFunc("/", HomePage).Methods("GET")
 	mux.HandleFunc("/", SynagoguePage).Methods("POST")
+	//mux.HandleFunc("/login", UserPage).Methods("GET")
+	//mux.HandleFunc("/login", UpdateUser).Methods("POST")
 	mux.HandleFunc("/admin", AdminPage).Methods("GET")
 	mux.HandleFunc("/admin", UpdateSynagogues).Methods("POST")
 
@@ -111,9 +114,12 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 		resString = resString + fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
 		resString = resString + "Synagogue dowsn't exist\n"
 	} else {
+		fmt.Println("Synagogue Exist and start update files")
 
 		calend := UpdateApiParams(s.CalendarApi)
 		zman := UpdateApiParams(s.ZmanimApi)
+		fmt.Printf("calend: %s\n\n\n", calend)
+		fmt.Printf("zman: %s\n\n\n", zman)
 
 		UpdateDirs(name)
 		UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman))
@@ -125,37 +131,50 @@ func UpdateSynagogues(res http.ResponseWriter, req *http.Request) {
 }
 
 func UpdateApiParams(api string) string {
+	fmt.Println("UpdateApiParams")
 	//Files limited period
 	const PERIOD int = 14
-	bStart := []byte(time.Now().String())
-	bStart = bStart[:11]
-	bEnd := []byte(time.Now().AddDate(0, 0, PERIOD).String())
-	bEnd = bEnd[:11]
-	//YYYY-MM-DD
+
+	bStart := DateFormat(time.Now().String())
+	bEnd := DateFormat(time.Now().AddDate(0, 0, PERIOD).String())
 	periodStart := strings.TrimSpace(fmt.Sprintf("start=%s", bStart))
-	fmt.Printf("periodStart: %s\n", periodStart)
-	periodEnd := strings.TrimSpace(fmt.Sprintf("end=%s", bEnd))
-	fmt.Printf("periodEnd: %s\n", periodEnd)
-	newPeriod := strings.TrimSpace(fmt.Sprintf("%s&%s", periodStart, periodEnd))
-	fmt.Printf("newPeriod: %s\n", newPeriod)
-	newApi := strings.TrimSpace(strings.Replace(api, "year=now", "", 3))
-	newApi = newApi + newPeriod
+	periodEnd := fmt.Sprintf("end=%s", bEnd)
+	newPeriod := fmt.Sprintf("%s&%s", periodStart, periodEnd)
+	newApi := strings.Replace(api, "year=now", "", 3)
+	newApi = strings.TrimSpace(newApi + newPeriod)
+	fmt.Printf("newApi: %s\n", newApi)
 
 	fmt.Printf("newApi: %s\n", newApi)
 	return newApi
 
 }
 
+func DateFormat(dateString string) string {
+	//YYYY-MM-DD
+	fmt.Println("DateFormat")
+	fmt.Printf("dateString: %s\n\n\n", dateString)
+	d := []byte(dateString)
+	d = d[:11]
+	s := string(d)
+	fmt.Printf("s: %s\n\n\n", s)
+	return s
+}
+
 func SynagogueExist(name, key string) (models.Synagogue, error) {
+	fmt.Println("SynagogueExist")
 	syn := *models.GetSynagogues()
 	b := models.Synagogue{}
 	for _, s := range syn {
 		if (s.Name == name) && (s.Key == key) {
-			fmt.Printf("Synagogue exist: %v\n", s)
+			fmt.Printf("Synagogue exist: %v\n\n\n", s)
 			b.Key = s.Key
+			fmt.Printf("b.Key: %v\n\n\n", b.Key)
 			b.Name = s.Name
+			fmt.Printf("b.Name: %v\n\n\n", b.Name)
 			b.CalendarApi = s.CalendarApi
+			fmt.Printf("b.CalendarApi: %v\n\n\n", b.CalendarApi)
 			b.ZmanimApi = s.ZmanimApi
+			fmt.Printf("b.ZmanimApi: %v\n\n\n", b.ZmanimApi)
 			return b, nil
 		}
 	}
@@ -163,6 +182,7 @@ func SynagogueExist(name, key string) (models.Synagogue, error) {
 }
 
 func GetSynagogueHttpJson(link string) string {
+	fmt.Println("GetSynagogueHttpJson")
 	fmt.Printf("link - %s\n", link)
 
 	resp, err := http.Get(link)
@@ -178,14 +198,17 @@ func GetSynagogueHttpJson(link string) string {
 }
 
 func UpdateDirs(name string) {
+	fmt.Println("UpdateDirs")
 	if !models.DirExist(name) {
 		models.CreateDir(name)
 	}
 }
 
 func UpdateFiles(name, calend, zman string) {
+	fmt.Println("UpdateFiles")
 	/*
-		1. Delete all existing files.
+		1. Delete all Daily files
+		2. Create new Daily files
 	*/
 
 	v := models.ZmanimJson{}
