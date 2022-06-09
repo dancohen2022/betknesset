@@ -6,11 +6,7 @@ import (
 	"path/filepath"
 )
 
-var synagogues_path string
-
-func InitSynagoguesPath() {
-	synagogues_path = "./files/synagogues/"
-}
+const SynagoguesPath string = "./files/synagogues/"
 
 func CreateDir(synagogue_name string) bool {
 	// Create main synagogue directory
