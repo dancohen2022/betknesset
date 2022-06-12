@@ -10,15 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dancohen2022/betknesset/models"
+	"github.com/dancohen2022/betknesset/pkg"
 	"github.com/gorilla/mux"
 )
 
 const PERIOD int = 14
 
 func main() {
-	models.InitSynagogues()
-	models.InitSynagoguesPath()
+	pkg.InitSynagogues()
 
 	go handler()
 
@@ -166,10 +165,10 @@ func DateFormat(dateString string) string {
 	return s
 }
 
-func SynagogueExist(name, key string) (models.Synagogue, error) {
+func SynagogueExist(name, key string) (pkg.Synagogue, error) {
 	fmt.Println("SynagogueExist")
-	syn := *models.GetSynagogues()
-	b := models.Synagogue{}
+	syn := *pkg.GetSynagogues()
+	b := pkg.Synagogue{}
 	for _, s := range syn {
 		if (s.Name == name) && (s.Key == key) {
 			b.Key = s.Key
@@ -199,8 +198,8 @@ func GetSynagogueHttpJson(link string) string {
 
 func UpdateDirs(name string) {
 	fmt.Println("UpdateDirs")
-	if !models.DirExist(name) {
-		models.CreateDir(name)
+	if !pkg.DirExist(name) {
+		pkg.CreateDir(name)
 	}
 }
 
@@ -211,7 +210,7 @@ func UpdateFiles(name, calend, zman string) {
 		2. Create new Daily files
 	*/
 
-	v := models.ZmanimJson{}
+	v := pkg.ZmanimJson{}
 	err := json.Unmarshal([]byte(zman), &v)
 	if err != nil {
 		log.Fatalln(err)
