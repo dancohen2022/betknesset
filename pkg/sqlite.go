@@ -92,7 +92,35 @@ func CreateTables() {
 
 /////// CREATE
 
-//CREATE new user (synagogue)
+//CREATE user (synagogue)
+func CreateUser(s Synagogue) Synagogue {
+	var synagogue Synagogue
+
+	db, err := sql.Open("sqlite3", SYNAGOGUESDB)
+
+	// Check if database connection was opened successfully
+	if err != nil {
+		// Print error and exit if there was problem opening connection.
+		log.Fatal(err)
+	}
+	// close database connection before exiting program.
+	defer db.Close()
+
+	// Begin transaction
+	tx, err := db.Begin()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Prepare prepared statement that can be reused.
+	stmt, err := tx.Prepare("INSERT INTO task(id, task, owner, checked) VALUES(?, ?, ?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// close statement before exiting program.
+	defer stmt.Close()
+
+	return synagogue
+}
 
 //CREATE schedule
 
@@ -104,12 +132,6 @@ func CreateTables() {
 //GET all schedules BY date - return slice of schedules
 
 //GET all schedule - return slice of schedules
-
-//////// ADD
-
-//ADD user - return user
-
-//ADD schedule - return schedule
 
 /////// UPDATE
 

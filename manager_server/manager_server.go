@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 
-	"github.com/dancohen2022/betknesset/models"
+	"github.com/dancohen2022/betknesset/pkg"
 )
 
 func main() {
-	models.InitSynagogues()
+	pkg.InitSynagogues()
 	//LoopManager()
-	models.CreatFirstDefaultConfigValuesFile()
+	pkg.CreatFirstDefaultConfigValuesFile()
 }
 
 func LoopManager() {
@@ -22,7 +22,7 @@ func LoopManager() {
 		if name == "" {
 			break
 		} else {
-			if models.ResetSynagogueSchedule(name) {
+			if pkg.ResetSynagogueSchedule(name) {
 				fmt.Printf("%s has been reseted", name)
 			} else {
 				fmt.Printf("%s doesn't exist", name)
@@ -30,7 +30,7 @@ func LoopManager() {
 		}
 	}
 	/*
-		for _, s := range *models.GetSynagogues() {
+		for _, s := range *pkg.GetSynagogues() {
 			GetDaySynagogueScheduleJSON(s)
 		}
 	*/
