@@ -16,7 +16,7 @@ func GetDb() string {
 	return SYNAGOGUESDB
 }
 
-func CreateDB() *sql.DB {
+func CreateDB() {
 
 	// Remove the todo database file if exists.
 	// Comment out the below line if you don't want to remove the database.
@@ -29,21 +29,12 @@ func CreateDB() *sql.DB {
 	if err != nil {
 		// Print error and exit if there was problem opening connection.
 		log.Fatal(err)
+		return
 	}
 	// close database connection before exiting program.
 	defer db.Close()
-}
 
-func CreateTables() {
-	db, err := sql.Open("sqlite3", SYNAGOGUESDB)
-
-	// Check if database connection was opened successfully
-	if err != nil {
-		// Print error and exit if there was problem opening connection.
-		log.Fatal(err)
-	}
-	// close database connection before exiting program.
-	defer db.Close()
+	//Create Tables
 	/* users:
 	id INTEGER NOT NULL PRIMARY KEY
 	name TEXT
@@ -58,8 +49,8 @@ func CreateTables() {
 	*/
 	// SQL statement to create a task table, with no records in it.
 	sqlStmt := `
-			CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name TEXT, key TEXT, type TEXT, active INTEGER,config TEXT, zmanimApi TEXT, calendarApi TEXT, logo BLOB, background BLOB);
-			`
+	CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name TEXT, key TEXT, type TEXT, active INTEGER,config TEXT, zmanimApi TEXT, calendarApi TEXT, logo BLOB, background BLOB);
+	`
 
 	//`DELETE FROM users;
 	//`
@@ -72,13 +63,13 @@ func CreateTables() {
 	}
 
 	/*schedules
-	id INTEGER NOT NULL PRIMARY KEY
-	date TEXT (2022-03-16)
-	info string (json) //JSON with all the schedules
+	  id INTEGER NOT NULL PRIMARY KEY
+	  date TEXT (2022-03-16)
+	  info string (json) //JSON with all the schedules
 	*/
 	sqlStmt = `
-	CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, info TEXT);
-	`
+CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, info TEXT);
+`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
