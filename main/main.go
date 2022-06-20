@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dancohen2022/betknessest/manager"
 	"github.com/dancohen2022/betknesset/pkg"
 	"github.com/gorilla/mux"
 )
@@ -19,11 +20,16 @@ const PERIOD int = 14
 func main() {
 	pkg.InitSynagogues()
 
-	go handler()
+	pkg.CreatFirstDefaultConfigValuesFile()
+	manager.LoopManager
 
-	//Development Process Exit
-	log.Println("Server started, press <ENTER> to exit")
-	fmt.Scanln()
+	/*
+		go handler()
+
+		//Development Process Exit
+		log.Println("Server started, press <ENTER> to exit")
+		fmt.Scanln()
+	*/
 
 }
 

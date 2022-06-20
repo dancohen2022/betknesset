@@ -10,7 +10,7 @@ import (
 
 //sqlite crud
 
-const SYNAGOGUESDB = "./synagogues.db"
+const SYNAGOGUESDB = "synagogues.db"
 
 func GetDb() string {
 	return SYNAGOGUESDB
