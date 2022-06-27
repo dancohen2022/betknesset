@@ -2,6 +2,8 @@ package manager
 
 import (
 	"fmt"
+
+	"github.com/dancohen2022/betknesset/pkg/synagogue"
 )
 
 func LoopManager() {
@@ -13,7 +15,7 @@ func LoopManager() {
 		if name == "" {
 			break
 		} else {
-			if ResetSynagogueSchedule(name) {
+			if synagogue.ResetSynagogueSchedule(name) {
 				fmt.Printf("%s has been reseted", name)
 			} else {
 				fmt.Printf("%s doesn't exist", name)

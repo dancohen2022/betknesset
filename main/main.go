@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dancohen2022/betknesset/pkg/pkg"
 	"github.com/gorilla/mux"
 )
 

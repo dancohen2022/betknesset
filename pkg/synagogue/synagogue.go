@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+
+	_ "github.com/dancohen2022/betknesset/pkg/functions"
 )
 
 // Registered Synagogues Info
