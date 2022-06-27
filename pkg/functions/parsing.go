@@ -1,6 +1,8 @@
 package functions
 
-import "github.com/dancohen2022/betknesset/pkg/synagogues"
+import (
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
+)
 
 type Item interface {
 	ParseItem() []synagogues.DailyItem
