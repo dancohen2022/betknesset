@@ -1,16 +1,12 @@
-package functions
-
-import (
-	"github.com/dancohen2022/betknesset/pkg/synagogues"
-)
+package synagogues
 
 type Item interface {
-	ParseItem() []synagogues.DailyItem
+	ParseItem() []DailyItem
 }
 
-func ParseItemsList(items []Item) *[]synagogues.DailyItem {
+func ParseItemsList(items []Item) *[]DailyItem {
 	lst := items
-	lst_daily := []synagogues.DailyItem{}
+	lst_daily := []DailyItem{}
 	for _, v := range lst {
 		d := v.ParseItem()
 		lst_daily = append(lst_daily, d...)
@@ -18,8 +14,8 @@ func ParseItemsList(items []Item) *[]synagogues.DailyItem {
 	return &lst_daily
 }
 
-func (item synagogues.CalendarItems) ParseItem() []synagogues.DailyItem {
-	var d synagogues.DailyItem
+func (item CalendarItems) ParseItem() []DailyItem {
+	var d DailyItem
 	d.Category = item.Category
 	d.Date = item.Date
 	d.Hebrew = item.Hebrew
@@ -27,11 +23,11 @@ func (item synagogues.CalendarItems) ParseItem() []synagogues.DailyItem {
 	d.Name = item.Title
 	d.Subcat = item.Subcat
 	d.Time = ""
-	return append([]synagogues.DailyItem{}, d)
+	return append([]DailyItem{}, d)
 }
 
-func (item synagogues.ZmanimJson) ParseItem() []synagogues.DailyItem {
-	lst := []synagogues.DailyItem{}
+func (item ZmanimJson) ParseItem() []DailyItem {
+	lst := []DailyItem{}
 	timesMap := GetItemsTimeMap(item.Times)
 
 	for key1, val1 := range timesMap {
@@ -39,7 +35,7 @@ func (item synagogues.ZmanimJson) ParseItem() []synagogues.DailyItem {
 		for key2, val2 := range val1 {
 			k := key2
 			v := val2
-			var d synagogues.DailyItem
+			var d DailyItem
 			d.Category = "dailyTimes"
 			d.Date = k
 			d.Hebrew = SetHebrewName(name)
@@ -54,7 +50,7 @@ func (item synagogues.ZmanimJson) ParseItem() []synagogues.DailyItem {
 	return lst
 }
 
-func GetItemsTimeMap(Times synagogues.ZmanimTimes) map[string]map[string]string {
+func GetItemsTimeMap(Times ZmanimTimes) map[string]map[string]string {
 	timesMap := make(map[string]map[string]string)
 	timesMap["ChatzotNight"] = Times.ChatzotNight
 	timesMap["AlotHaShachar"] = Times.AlotHaShachar
