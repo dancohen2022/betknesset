@@ -181,10 +181,10 @@ func DateFormat(dateString string) string {
 	return s
 }
 
-func SynagogueExist(name, key string) (pkg.Synagogue, error) {
+func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	fmt.Println("SynagogueExist")
-	syn := *pkg.GetSynagogues()
-	b := pkg.Synagogue{}
+	syn := *synagogues.GetSynagogues()
+	b := synagogues.Synagogue{}
 	for _, s := range syn {
 		if (s.Name == name) && (s.Key == key) {
 			b.Key = s.Key
@@ -214,7 +214,7 @@ func GetSynagogueHttpJson(link string) string {
 
 func UpdateDirs(name string) {
 	fmt.Println("UpdateDirs")
-	if !pkg.DirExist(name) {
+	if !functions.DirExist(name) {
 		functions.CreateDir(name)
 	}
 }
@@ -226,7 +226,7 @@ func UpdateFiles(name, calend, zman string) {
 		2. Create new Daily files
 	*/
 
-	v := pkg.ZmanimJson{}
+	v := synagogues.ZmanimJson{}
 	err := json.Unmarshal([]byte(zman), &v)
 	if err != nil {
 		log.Fatalln(err)
