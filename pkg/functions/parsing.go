@@ -1,5 +1,9 @@
 package functions
 
+import (
+	_ "github.com/dancohen2022/betknesset/pkg/synagogue"
+)
+
 type Item interface {
 	ParseItem() []DailyItem
 }
