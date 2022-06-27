@@ -20,9 +20,9 @@ import (
 const PERIOD int = 14
 
 func main() {
-	synagogues.InitSynagogues()
+	functions.InitSynagogues()
 
-	synagogues.CreatFirstDefaultConfigValuesFile()
+	functions.CreatFirstDefaultConfigValuesFile()
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -183,7 +183,7 @@ func DateFormat(dateString string) string {
 
 func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	fmt.Println("SynagogueExist")
-	syn := *synagogues.GetSynagogues()
+	syn := *functions.GetSynagogues()
 	b := synagogues.Synagogue{}
 	for _, s := range syn {
 		if (s.Name == name) && (s.Key == key) {
