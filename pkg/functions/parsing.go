@@ -1,6 +1,7 @@
 package functions
 
 import (
+	_ "github.com/dancohen2022/betknesset/pkg/functions"
 	_ "github.com/dancohen2022/betknesset/pkg/synagogue"
 )
 

@@ -1,4 +1,4 @@
-package synagogue
+package synagogues
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/dancohen2022/betknesset/pkg/functions"
+	"github.com/dancohen2022/betknesset/pkg/functions"
 )
 
 // Registered Synagogues Info
@@ -210,18 +210,18 @@ func ResetSynagogueSchedule(name string) bool {
 	for _, s := range synagogues {
 		if s.Name == name {
 			//Create Dir If doesnt exist yet
-			UpdateDirs(name)
+			functions.UpdateDirs(name)
 
 			//Delete all files
-			if DeleteAllFiles(name) != nil {
+			if functions.DeleteAllFiles(name) != nil {
 				fmt.Println("Couldn't delete files")
 				return false
 			}
 			//Update API period and other constants
-			calend := UpdateApiParams(s.CalendarApi)
-			zman := UpdateApiParams(s.ZmanimApi)
+			calend := functions.UpdateApiParams(s.CalendarApi)
+			zman := functions.UpdateApiParams(s.ZmanimApi)
 
-			UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman), GetSynagogueConfigJson(name))
+			functions.UpdateFiles(name, functions.GetSynagogueHttpJson(calend), functions.GetSynagogueHttpJson(zman), functions.GetSynagogueConfigJson(name))
 
 			return true
 		}

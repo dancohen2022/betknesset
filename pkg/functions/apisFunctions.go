@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
 )
 
 const PERIOD int = 14
@@ -50,9 +52,9 @@ func UpdateFiles(name, calend, zman, config string) {
 		1. Delete all Daily files
 		2. Create new Daily files
 	*/
-	cld := CalendarJson{}
-	zmn := ZmanimJson{}
-	cnf := ConfigJson{}
+	cld := synagogues.CalendarJson{}
+	zmn := functions.ZmanimJson{}
+	cnf := functions.ConfigJson{}
 
 	err := json.Unmarshal([]byte(calend), &cld)
 	if err != nil {
@@ -94,7 +96,7 @@ func GetSynagogueHttpJson(link string) string {
 func GetSynagogueConfigJson(name string) string {
 	fmt.Println("GetSynagogueConfigJson")
 
-	resp := ReadFile(name, CONFIGFILE)
+	resp := ReadFile(name, functions.CONFIGFILE)
 	return string(*resp)
 
 }

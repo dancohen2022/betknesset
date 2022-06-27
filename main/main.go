@@ -11,20 +11,23 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dancohen2022/betknesset/pkg/functions"
+	"github.com/dancohen2022/betknesset/pkg/manager"
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	"github.com/gorilla/mux"
 )
 
 const PERIOD int = 14
 
 func main() {
-	pkg.InitSynagogues()
+	synagogues.InitSynagogues()
 
-	pkg.CreatFirstDefaultConfigValuesFile()
+	synagogues.CreatFirstDefaultConfigValuesFile()
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		pkg.LoopManager()
+		manager.LoopManager()
 	}()
 	/*
 		wg.Add(1)
@@ -212,7 +215,7 @@ func GetSynagogueHttpJson(link string) string {
 func UpdateDirs(name string) {
 	fmt.Println("UpdateDirs")
 	if !pkg.DirExist(name) {
-		pkg.CreateDir(name)
+		functions.CreateDir(name)
 	}
 }
 

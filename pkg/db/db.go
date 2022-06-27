@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/dancohen2022/betknesset/pkg/synagogue"
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -85,8 +85,8 @@ CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, info TEXT);
 /////// CREATE
 
 //CREATE user (synagogue)
-func CreateUser(s synagogue.Synagogue) synagogue.Synagogue {
-	var synagogue synagogue.Synagogue
+func CreateUser(s synagogues.Synagogue) synagogues.Synagogue {
+	var synagogue synagogues.Synagogue
 
 	db, err := sql.Open("sqlite3", SYNAGOGUESDB)
 
