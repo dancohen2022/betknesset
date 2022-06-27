@@ -4,21 +4,23 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
 )
 
 func CreateDir(synagogue_name string) error {
 	// Create main synagogue directory
 
-	err := os.Mkdir(fmt.Sprint(SYNAGOGUESPATH, synagogue_name), 0755)
+	err := os.Mkdir(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name), 0755)
 	if err != nil {
 		return err
 	}
-	err = os.Mkdir(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, CONFIGPATH), 0755)
+	err = os.Mkdir(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name, synagogues.CONFIGPATH), 0755)
 	return err
 }
 
 func DirExist(synagogue_name string) bool {
-	if _, err := os.Stat(fmt.Sprint(SYNAGOGUESPATH, synagogue_name)); !os.IsNotExist(err) {
+	if _, err := os.Stat(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name)); !os.IsNotExist(err) {
 		// path/to/whatever exists
 		return true
 	}
@@ -26,13 +28,13 @@ func DirExist(synagogue_name string) bool {
 }
 
 func DeleteDir(synagogue_name string) error {
-	err := os.Remove(fmt.Sprint(SYNAGOGUESPATH, synagogue_name))
+	err := os.Remove(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name))
 	return err
 
 }
 
 func WriteFile(synagogue_name, file_name string, content string) bool {
-	myfile, err := os.Create(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, "/", file_name))
+	myfile, err := os.Create(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name, "/", file_name))
 	if err != nil {
 		return false
 	}
@@ -43,7 +45,7 @@ func WriteFile(synagogue_name, file_name string, content string) bool {
 }
 
 func ReadFile(synagogue_name, file_name string) *[]byte {
-	dat, err := os.ReadFile(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, "/", file_name))
+	dat, err := os.ReadFile(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name, "/", file_name))
 	if err != nil {
 		return &[]byte{}
 	}
@@ -51,7 +53,7 @@ func ReadFile(synagogue_name, file_name string) *[]byte {
 }
 
 func FileExist(synagogue_name, file_name string) bool {
-	if _, err := os.Stat(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, "/", file_name)); !os.IsNotExist(err) {
+	if _, err := os.Stat(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name, "/", file_name)); !os.IsNotExist(err) {
 		// path/to/whatever exists
 		return true
 	}
@@ -59,7 +61,7 @@ func FileExist(synagogue_name, file_name string) bool {
 }
 
 func DeleteFile(synagogue_name, file_name string) error {
-	err := os.Remove(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, "/", file_name))
+	err := os.Remove(fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name, "/", file_name))
 	return err
 }
 
@@ -68,7 +70,7 @@ func DeleteAllFiles(synagogue_name string) error {
 		err := os.RemoveAll(fmt.Sprint(SYNAGOGUESPATH, synagogue_name, "/"))
 	*/
 
-	files, err := filepath.Glob(filepath.Join(SYNAGOGUESPATH, synagogue_name, "/", "*"))
+	files, err := filepath.Glob(filepath.Join(synagogues.SYNAGOGUESPATH, synagogue_name, "/", "*"))
 	if err != nil {
 		return err
 	}
@@ -84,7 +86,7 @@ func DeleteAllFiles(synagogue_name string) error {
 func GetAllFilesInDir(synagogue_name string) *[]string {
 	var files []string
 
-	root := fmt.Sprint(SYNAGOGUESPATH, synagogue_name)
+	root := fmt.Sprint(synagogues.SYNAGOGUESPATH, synagogue_name)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		files = append(files, path)
 		return nil

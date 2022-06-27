@@ -53,8 +53,8 @@ func UpdateFiles(name, calend, zman, config string) {
 		2. Create new Daily files
 	*/
 	cld := synagogues.CalendarJson{}
-	zmn := functions.ZmanimJson{}
-	cnf := functions.ConfigJson{}
+	zmn := synagogues.ZmanimJson{}
+	cnf := synagogues.ConfigJson{}
 
 	err := json.Unmarshal([]byte(calend), &cld)
 	if err != nil {
@@ -96,7 +96,7 @@ func GetSynagogueHttpJson(link string) string {
 func GetSynagogueConfigJson(name string) string {
 	fmt.Println("GetSynagogueConfigJson")
 
-	resp := ReadFile(name, functions.CONFIGFILE)
+	resp := ReadFile(name, synagogues.CONFIGFILE)
 	return string(*resp)
 
 }

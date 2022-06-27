@@ -1,17 +1,14 @@
 package functions
 
-import (
-	_ "github.com/dancohen2022/betknesset/pkg/functions"
-	_ "github.com/dancohen2022/betknesset/pkg/synagogue"
-)
+import "github.com/dancohen2022/betknesset/pkg/synagogues"
 
 type Item interface {
-	ParseItem() []DailyItem
+	ParseItem() []synagogues.DailyItem
 }
 
-func ParseItemsList(items []Item) *[]DailyItem {
+func ParseItemsList(items []Item) *[]synagogues.DailyItem {
 	lst := items
-	lst_daily := []DailyItem{}
+	lst_daily := []synagogues.DailyItem{}
 	for _, v := range lst {
 		d := v.ParseItem()
 		lst_daily = append(lst_daily, d...)
@@ -19,8 +16,8 @@ func ParseItemsList(items []Item) *[]DailyItem {
 	return &lst_daily
 }
 
-func (item CalendarItems) ParseItem() []DailyItem {
-	var d DailyItem
+func (item synagogues.CalendarItems) ParseItem() []synagogues.DailyItem {
+	var d synagogues.DailyItem
 	d.Category = item.Category
 	d.Date = item.Date
 	d.Hebrew = item.Hebrew
@@ -28,11 +25,11 @@ func (item CalendarItems) ParseItem() []DailyItem {
 	d.Name = item.Title
 	d.Subcat = item.Subcat
 	d.Time = ""
-	return append([]DailyItem{}, d)
+	return append([]synagogues.DailyItem{}, d)
 }
 
-func (item ZmanimJson) ParseItem() []DailyItem {
-	lst := []DailyItem{}
+func (item synagogues.ZmanimJson) ParseItem() []synagogues.DailyItem {
+	lst := []synagogues.DailyItem{}
 	timesMap := GetItemsTimeMap(item.Times)
 
 	for key1, val1 := range timesMap {
@@ -40,7 +37,7 @@ func (item ZmanimJson) ParseItem() []DailyItem {
 		for key2, val2 := range val1 {
 			k := key2
 			v := val2
-			var d DailyItem
+			var d synagogues.DailyItem
 			d.Category = "dailyTimes"
 			d.Date = k
 			d.Hebrew = SetHebrewName(name)
@@ -55,7 +52,7 @@ func (item ZmanimJson) ParseItem() []DailyItem {
 	return lst
 }
 
-func GetItemsTimeMap(Times ZmanimTimes) map[string]map[string]string {
+func GetItemsTimeMap(Times synagogues.ZmanimTimes) map[string]map[string]string {
 	timesMap := make(map[string]map[string]string)
 	timesMap["ChatzotNight"] = Times.ChatzotNight
 	timesMap["AlotHaShachar"] = Times.AlotHaShachar
