@@ -1,19 +1,10 @@
-package main
+package pkg
 
 import (
 	"fmt"
-
-	"github.com/dancohen2022/betknesset/pkg"
 )
 
-func main() {
-	pkg.InitSynagogues()
-	//LoopManager()
-	pkg.CreatFirstDefaultConfigValuesFile()
-}
-
 func LoopManager() {
-
 	var name string
 	for {
 		fmt.Printf("Enter Synagogue name or Enter to exit: ")
@@ -22,7 +13,7 @@ func LoopManager() {
 		if name == "" {
 			break
 		} else {
-			if pkg.ResetSynagogueSchedule(name) {
+			if ResetSynagogueSchedule(name) {
 				fmt.Printf("%s has been reseted", name)
 			} else {
 				fmt.Printf("%s doesn't exist", name)

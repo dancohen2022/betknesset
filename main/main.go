@@ -8,9 +8,9 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
-	"github.com/dancohen2022/betknessest/manager"
 	"github.com/dancohen2022/betknesset/pkg"
 	"github.com/gorilla/mux"
 )
@@ -21,15 +21,23 @@ func main() {
 	pkg.InitSynagogues()
 
 	pkg.CreatFirstDefaultConfigValuesFile()
-	manager.LoopManager
-
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		pkg.LoopManager()
+	}()
 	/*
-		go handler()
-
-		//Development Process Exit
-		log.Println("Server started, press <ENTER> to exit")
-		fmt.Scanln()
+		wg.Add(1)
+		go func(){
+			defer wg.Done()
+			go handler()
+			log.Println("Server started, press <ENTER> to exit")
+			fmt.Scanln()
+		}()
 	*/
+
+	wg.Wait()
 
 }
 
