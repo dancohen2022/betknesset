@@ -1,4 +1,4 @@
-package pkg
+package functions
 
 type Item interface {
 	ParseItem() []DailyItem
@@ -125,4 +125,3 @@ func SetHebrewName(name string) string {
 		return "זמנים"
 	}
 }
-

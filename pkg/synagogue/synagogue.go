@@ -1,4 +1,4 @@
-package pkg
+package synagogue
 
 import (
 	"encoding/json"
