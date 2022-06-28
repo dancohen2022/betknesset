@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"log"
-	"os"
 
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	_ "github.com/mattn/go-sqlite3"
@@ -17,23 +16,9 @@ func GetDb() string {
 	return SYNAGOGUESDB
 }
 
-func CreateDB() {
+func CreateDB(db *sql.DB) {
 
-	// Remove the todo database file if exists.
-	// Comment out the below line if you don't want to remove the database.
-	os.Remove(SYNAGOGUESDB)
-
-	// Open database connection
-	db, err := sql.Open("sqlite3", SYNAGOGUESDB)
-
-	// Check if database connection was opened successfully
-	if err != nil {
-		// Print error and exit if there was problem opening connection.
-		log.Fatal(err)
-		return
-	}
-	// close database connection before exiting program.
-	defer db.Close()
+	// both manager and synagogues are saved in the same users table
 
 	//Create Tables
 	/* users:
@@ -57,7 +42,7 @@ func CreateDB() {
 	//`
 
 	// Execute the SQL statement
-	_, err = db.Exec(sqlStmt)
+	_, err := db.Exec(sqlStmt)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return
@@ -69,7 +54,7 @@ func CreateDB() {
 	  info string (json) //JSON with all the schedules
 	*/
 	sqlStmt = `
-CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, info TEXT);
+CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, json TEXT);
 `
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

@@ -1,16 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/dancohen2022/betknesset/pkg/db"
 	"github.com/dancohen2022/betknesset/pkg/functions"
 	"github.com/dancohen2022/betknesset/pkg/manager"
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
@@ -20,9 +23,25 @@ import (
 const PERIOD int = 14
 
 func main() {
-	functions.InitSynagogues()
+	//functions.InitSynagogues()
+	//functions.CreatFirstDefaultConfigValuesFile()
 
-	functions.CreatFirstDefaultConfigValuesFile()
+	///// OPEN DATABASE CONNECTION
+	// Remove the todo database file if exists.
+	// Comment out the below line if you don't want to remove the database.
+	os.Remove(db.SYNAGOGUESDB)
+	// Open database connection
+	db, err := sql.Open("sqlite3", db.SYNAGOGUESDB)
+	// Check if database connection was opened successfully
+	if err != nil {
+		// Print error and exit if there was problem opening connection.
+		log.Fatal(err)
+		return
+	}
+	// close database connection before exiting program.
+	defer db.Close()
+	//////
+
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -186,9 +205,9 @@ func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	syn := *functions.GetSynagogues()
 	b := synagogues.Synagogue{}
 	for _, s := range syn {
-		if (s.Name == name) && (s.Key == key) {
-			b.Key = s.Key
-			b.Name = s.Name
+		if (s.User.Name == name) && (s.User.Key == key) {
+			b.User.Key = s.User.Key
+			b.User.Name = s.User.Name
 			b.CalendarApi = s.CalendarApi
 			b.ZmanimApi = s.ZmanimApi
 			return b, nil

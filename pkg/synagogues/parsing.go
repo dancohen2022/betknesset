@@ -4,14 +4,14 @@ type Item interface {
 	ParseItem() []DailyItem
 }
 
-func ParseItemsList(items []Item) *[]DailyItem {
+func ParseItemsList(items []Item) []DailyItem {
 	lst := items
 	lst_daily := []DailyItem{}
 	for _, v := range lst {
 		d := v.ParseItem()
 		lst_daily = append(lst_daily, d...)
 	}
-	return &lst_daily
+	return lst_daily
 }
 
 func (item CalendarItems) ParseItem() []DailyItem {

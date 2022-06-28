@@ -1,9 +1,14 @@
 package synagogues
 
+// Basic user
+type User struct {
+	Name string `json:"name"`
+	Key  string `json:"key"`
+}
+
 // Registered Synagogues Info
 type Synagogue struct {
-	Name        string `json:"name"`
-	Key         string `json:"key"`
+	User        User   `json:"user"`
 	CalendarApi string `json:"calendar"`
 	ZmanimApi   string `json:"zmanim"`
 }

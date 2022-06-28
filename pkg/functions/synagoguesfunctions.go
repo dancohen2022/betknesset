@@ -30,7 +30,7 @@ func GetSynagogues() *[]synagogues.Synagogue {
 
 func ResetSynagogueSchedule(name string) bool {
 	for _, s := range synagogues.Synagogues {
-		if s.Name == name {
+		if s.User.Name == name {
 			//Create Dir If doesnt exist yet
 			UpdateDirs(name)
 
@@ -61,9 +61,9 @@ func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	syn := synagogues.Synagogues
 	b := synagogues.Synagogue{}
 	for _, s := range syn {
-		if (s.Name == name) && (s.Key == key) {
-			b.Key = s.Key
-			b.Name = s.Name
+		if (s.User.Name == name) && (s.User.Key == key) {
+			b.User.Key = s.User.Key
+			b.User.Name = s.User.Name
 			b.CalendarApi = s.CalendarApi
 			b.ZmanimApi = s.ZmanimApi
 			return b, nil
