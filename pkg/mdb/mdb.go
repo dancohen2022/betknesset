@@ -1,4 +1,4 @@
-package db
+package mdb
 
 import (
 	"database/sql"
@@ -8,19 +8,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//sqlite crud
+//sqlite cruds
 
 const SYNAGOGUESDB = "synagogues.db"
 
-func GetDb() string {
-	return SYNAGOGUESDB
-}
-
-func CreateDB(db *sql.DB) {
+func CreateDBTables(db *sql.DB) {
 
 	// both manager and synagogues are saved in the same users table
 
 	//Create Tables
+
 	/* users:
 	id INTEGER NOT NULL PRIMARY KEY
 	name TEXT
@@ -33,6 +30,7 @@ func CreateDB(db *sql.DB) {
 	logo BLOB
 	background BLOB
 	*/
+
 	// SQL statement to create a task table, with no records in it.
 	sqlStmt := `
 	CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name TEXT, key TEXT, type TEXT, active INTEGER,config TEXT, zmanimApi TEXT, calendarApi TEXT, logo BLOB, background BLOB);
@@ -50,11 +48,12 @@ func CreateDB(db *sql.DB) {
 
 	/*schedules
 	  id INTEGER NOT NULL PRIMARY KEY
+	  name TEXT
 	  date TEXT (2022-03-16)
 	  info string (json) //JSON with all the schedules
 	*/
 	sqlStmt = `
-CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, json TEXT);
+CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, json TEXT);
 `
 	_, err = db.Exec(sqlStmt)
 	if err != nil {
@@ -67,34 +66,19 @@ CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, date TEXT, json TEXT);
 	//`
 }
 
-/////// CREATE
+/////// ADD
 
-//CREATE user (synagogue)
-func CreateUser(s synagogues.Synagogue) synagogues.Synagogue {
-	var synagogue synagogues.Synagogue
-
-	db, err := sql.Open("sqlite3", SYNAGOGUESDB)
-
-	// Check if database connection was opened successfully
+//ADD SYNAGOGUE (synagogue)
+func AddSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
+	synagogue := synagogues.Synagogue{}
+	sqlStmt := `
+CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, json TEXT);
+`
+	_, err := db.Exec(sqlStmt)
 	if err != nil {
-		// Print error and exit if there was problem opening connection.
-		log.Fatal(err)
+		log.Printf("%q: %s\n", err, sqlStmt)
+		return synagogue
 	}
-	// close database connection before exiting program.
-	defer db.Close()
-
-	// Begin transaction
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Prepare prepared statement that can be reused.
-	stmt, err := tx.Prepare("INSERT INTO task(id, task, owner, checked) VALUES(?, ?, ?, ?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// close statement before exiting program.
-	defer stmt.Close()
 
 	return synagogue
 }
