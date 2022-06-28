@@ -32,6 +32,7 @@ func main() {
 	// close database connection before exiting program.
 	defer db.Close()
 	//////
+	mdb.CreateDBTables(db)
 
 	/////
 	//Init from files

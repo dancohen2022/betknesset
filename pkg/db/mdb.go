@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
+	"github.com/mattn/go-sqlite3"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -42,8 +43,14 @@ func CreateDBTables(db *sql.DB) {
 	// Execute the SQL statement
 	_, err := db.Exec(sqlStmt)
 	if err != nil {
-		log.Printf("%q: %s\n", err, sqlStmt)
-		return
+		if sqlError, ok := err.(sqlite3.Error); ok {
+			// code 1 == "table already exists"
+			if sqlError.Code != 1 {
+				log.Fatal(sqlError)
+			}
+		} else {
+			log.Fatal(err)
+		}
 	}
 
 	/*schedules
@@ -55,10 +62,16 @@ func CreateDBTables(db *sql.DB) {
 	sqlStmt = `
 CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, json TEXT);
 `
-	_, err = db.Exec(sqlStmt)
+
 	if err != nil {
-		log.Printf("%q: %s\n", err, sqlStmt)
-		return
+		if sqlError, ok := err.(sqlite3.Error); ok {
+			// code 1 == "table already exists"
+			if sqlError.Code != 1 {
+				log.Fatal(sqlError)
+			}
+		} else {
+			log.Fatal(err)
+		}
 	}
 
 	//`
@@ -66,15 +79,28 @@ CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, j
 	//`
 }
 
-/////// ADD
+/////// ADD/CREATE/INSERT
 
 //ADD SYNAGOGUE (synagogue)
-func AddSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
+func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
+
 	synagogue := synagogues.Synagogue{}
-	sqlStmt := `
-CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, json TEXT);
-`
-	_, err := db.Exec(sqlStmt)
+
+	/* users:
+	id INTEGER NOT NULL PRIMARY KEY
+	name TEXT
+	key TEXT
+	type TEXT //manager, synagogue
+	active INTEGER
+	config TEXT (json)
+	zmanimApi TEXT (json)
+	calendarApi TEXT (json)
+	logo BLOB
+	background BLOB
+	*/
+	sqlStmt := `INSERT INTO users (name , key, type, active, config, zmanimApi, calendarApi, logo, background)
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(sqlStmt, s.User.Name, s.User.Key, "synagogue", 1, "", s.ZmanimApi, s.CalendarApi, nil, nil)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return synagogue
@@ -86,7 +112,12 @@ CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, name TEXT, date TEXT, j
 //CREATE schedule
 
 /////// GET
-//GET user BY name - return user
+//GET synagogue BY User - return synagogue
+func GetSynagogue(db *sql.DB, user synagogues.User) synagogues.Synagogue {
+	synagogue := synagogues.Synagogue{}
+
+	return synagogue
+}
 
 //GET all users - return slice of users
 
