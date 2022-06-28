@@ -2,6 +2,7 @@ package mdb
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
@@ -91,16 +92,16 @@ func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
 	name TEXT
 	key TEXT
 	type TEXT //manager, synagogue
-	active INTEGER
+	active BOOLEAN
 	config TEXT (json)
 	zmanimApi TEXT (json)
 	calendarApi TEXT (json)
 	logo BLOB
 	background BLOB
 	*/
-	sqlStmt := `INSERT INTO users (name , key, type, active, config, zmanimApi, calendarApi, logo, background)
-	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, s.User.Name, s.User.Key, "synagogue", 1, "", s.ZmanimApi, s.CalendarApi, nil, nil)
+	sqlStmt := `INSERT INTO users (name , key, type, active, zmanimApi, calendarApi, logo, background)
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(sqlStmt, s.User.Name, s.User.Key, "synagogue", true, s.ZmanimApi, s.CalendarApi, nil, nil)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return synagogue
@@ -109,7 +110,27 @@ func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
 	return synagogue
 }
 
-//CREATE schedule
+//CREATE schedule rom schedule list
+func CreateSchedule(db *sql.DB, c synagogues.ConfigItem) error {
+	/*schedules
+	  id INTEGER NOT NULL PRIMARY KEY
+	  name TEXT
+	  date TEXT (2022-03-16)
+	  info string (json) //JSON with all the schedules
+	*/
+
+	js, _ := json.Marshal(c)
+
+	sqlStmt := `INSERT INTO schedules (name , date, info)
+	VALUES(?, ?, ?)`
+	_, err := db.Exec(sqlStmt, c.Name, c.Date, js)
+	if err != nil {
+		log.Printf("%q: %s\n", err, sqlStmt)
+		return err
+	}
+
+	return nil
+}
 
 /////// GET
 //GET synagogue BY User - return synagogue
