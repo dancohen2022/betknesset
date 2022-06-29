@@ -2,8 +2,11 @@ package synagogues
 
 // Basic user
 type User struct {
-	Name string `json:"name"`
-	Key  string `json:"key"`
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Key      string `json:"key"`
+	UserType string `json:"type"` //manager, synagogue
+	Active   bool   `json:"active"`
 }
 
 // Registered Synagogues Info
@@ -11,6 +14,9 @@ type Synagogue struct {
 	User        User   `json:"user"`
 	CalendarApi string `json:"calendar"`
 	ZmanimApi   string `json:"zmanim"`
+	Config      string `json:"config"`
+	Logo        string `json:"logo"`
+	Background  string `json:"background"`
 }
 
 // Final Daily Schedules
@@ -50,7 +56,7 @@ type ConfigItem struct {
 	Name     string `json:"name"`
 	Hname    string `json:"hname"`
 	Category string `json:"category"`
-	Day      string `json:"day"`
+	Date     string `json:"date"`
 	Time     string `json:"time"`
 	Info     string `json:"info"`
 	On       bool   `json:"on"`
