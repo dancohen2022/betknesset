@@ -3,6 +3,7 @@ package mdb
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
@@ -62,9 +63,12 @@ func CreateDBTables(db *sql.DB) {
 	  date TEXT (2022-03-16)
 	  info string (json) //JSON with all the schedules
 	*/
+	fmt.Println("sqlStmt = CREATE TABLE schedules")
 	sqlStmt = `
-CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, date TEXT, json TEXT);
+CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, date TEXT, info TEXT);
 `
+	// Execute the SQL statement
+	_, err = db.Exec(sqlStmt)
 
 	if err != nil {
 		if sqlError, ok := err.(sqlite3.Error); ok {

@@ -31,7 +31,7 @@ func main() {
 	}
 	// close database connection before exiting program.
 	defer db.Close()
-	//////
+	////// CREATE TABLES if first time
 	mdb.CreateDBTables(db)
 
 	/////
