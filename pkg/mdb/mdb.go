@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	"github.com/mattn/go-sqlite3"
@@ -34,27 +35,33 @@ func CreateDBTables(db *sql.DB) {
 	background string (filename)
 	*/
 
-	// SQL statement to create a task table, with no records in it.
-	sqlStmt := `
-	CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name TEXT, key TEXT, type TEXT, 
-		active INTEGER,config TEXT, zmanimApi TEXT, calendarApi TEXT, logo string, background string);
-	`
-
-	//`DELETE FROM users;
-	//`
-
 	// Execute the SQL statement
-	_, err := db.Exec(sqlStmt)
-	if err != nil {
-		if sqlError, ok := err.(sqlite3.Error); ok {
-			// code 1 == "table already exists"
-			if sqlError.Code != 1 {
-				log.Fatal(sqlError)
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		// SQL statement to create a task table, with no records in it.
+		sqlStmt := `
+			CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name TEXT, key TEXT, type TEXT,
+				active BOOLEAN,config TEXT, zmanimApi TEXT, calendarApi TEXT, logo string, background string);
+			`
+
+		//`DELETE FROM users;
+		//`
+		_, err := db.Exec(sqlStmt)
+		if err != nil {
+			if sqlError, ok := err.(sqlite3.Error); ok {
+				// code 1 == "table already exists"
+				if sqlError.Code != 1 {
+					log.Fatal(sqlError)
+				}
+			} else {
+				log.Fatal(err)
 			}
-		} else {
-			log.Fatal(err)
 		}
-	}
+	}()
+	wg.Wait()
 
 	/*schedules
 	  id INTEGER NOT NULL PRIMARY KEY
@@ -63,24 +70,29 @@ func CreateDBTables(db *sql.DB) {
 	  date TEXT (2022-03-16)
 	  info string (json) //JSON with all the schedules
 	*/
-	fmt.Println("sqlStmt = CREATE TABLE schedules")
-	sqlStmt = `
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		fmt.Println("sqlStmt = CREATE TABLE schedules")
+		sqlStmt := `
 CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, date TEXT, info TEXT);
 `
-	// Execute the SQL statement
-	_, err = db.Exec(sqlStmt)
+		// Execute the SQL statement
+		_, err := db.Exec(sqlStmt)
 
-	if err != nil {
-		if sqlError, ok := err.(sqlite3.Error); ok {
-			// code 1 == "table already exists"
-			if sqlError.Code != 1 {
-				log.Fatal(sqlError)
+		if err != nil {
+			if sqlError, ok := err.(sqlite3.Error); ok {
+				// code 1 == "table already exists"
+				if sqlError.Code != 1 {
+					log.Fatal(sqlError)
+				}
+			} else {
+				log.Fatal(err)
 			}
-		} else {
-			log.Fatal(err)
 		}
-	}
-
+		fmt.Println("sqlStmt = CREATE TABLE schedules SUCCEEDED")
+	}()
+	wg.Wait()
 	//`
 	//DELETE FROM schedules;
 	//`
