@@ -60,26 +60,40 @@ func main() {
 		Background  string `json:"background"`
 	*/
 
-	s := synagogues.Synagogue{
-		User: synagogues.User{
+	s := []synagogues.Synagogue{
+		{User: synagogues.User{
 			Id:       0,
 			Name:     "shuva_raanana",
 			Key:      "123456",
 			UserType: "synagogue",
 			Active:   true,
 		},
-		CalendarApi: "https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&month=6&ss=on&mf=on&c=on&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&M=on&s=on",
-		ZmanimApi:   "https://www.hebcal.com/zmanim?cfg=json&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&year=now",
-		Config:      "",
-		Logo:        "",
-		Background:  "",
+			CalendarApi: "https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&ss=on&mf=on&c=on&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&M=on&s=on",
+			ZmanimApi:   "https://www.hebcal.com/zmanim?cfg=json&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&year=now",
+			Config:      "",
+			Logo:        "",
+			Background:  ""},
+		{User: synagogues.User{
+			Id:       0,
+			Name:     "bentata",
+			Key:      "654321",
+			UserType: "synagogue",
+			Active:   true,
+		},
+			CalendarApi: "https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&ss=on&mf=on&c=on&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&M=on&s=on",
+			ZmanimApi:   "https://www.hebcal.com/zmanim?cfg=json&geo=geopos&latitude=32.1848&longitude=34.8713&tzid=Israel&year=now",
+			Config:      "",
+			Logo:        "",
+			Background:  "",
+		},
 	}
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		mdb.CreateManager(db, u)
-		mdb.CreateSynagogue(db, s)
+		mdb.CreateSynagogue(db, s[0])
+		mdb.CreateSynagogue(db, s[1])
 	}()
 	wg.Wait()
 	/////
