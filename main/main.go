@@ -2,9 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
-	"sync"
 
 	"github.com/dancohen2022/betknesset/pkg/mdb"
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
@@ -33,16 +33,46 @@ func main() {
 	}
 	// close database connection before exiting program.
 	defer db.Close()
-	////// CREATE TABLES if first time
-	var wg sync.WaitGroup
-	wg.Add(1)
+	testMdbFunctions(db)
+	/////
+	//Init from files
+	//functions.InitSynagogues()
+	//functions.CreatFirstDefaultConfigValuesFile()
 
-	go func() {
-		defer wg.Done()
-		mdb.CreateDBTables(db)
-	}()
-	wg.Wait()
+	/////
+	/*
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			manager.LoopManager()
+		}()
+	*/
 
+	/*
+		wg.Add(1)
+		go func(){
+			defer wg.Done()
+			go handler()
+			log.Println("Server started, press <ENTER> to exit")
+			fmt.Scanln()
+		}()
+	*/
+
+	//wg.Wait()
+
+}
+
+func testMdbFunctions(db *sql.DB) {
+
+	/*User
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Key      string `json:"key"`
+	UserType string `json:"type"` //manager, synagogue
+	Active   bool   `json:"active"`
+
+	*/
 	u := synagogues.User{
 		Id:       0,
 		Name:     "Dan",
@@ -51,16 +81,16 @@ func main() {
 		Active:   true,
 	}
 
-	/*
-		User        User   `json:"user"`
-		CalendarApi string `json:"calendar"`
-		ZmanimApi   string `json:"zmanim"`
-		Config      string `json:"config"`
-		Logo        string `json:"logo"`
-		Background  string `json:"background"`
+	/* Synagogue
+	User        User   `json:"user"`
+	CalendarApi string `json:"calendar"`
+	ZmanimApi   string `json:"zmanim"`
+	Config      string `json:"config"`
+	Logo        string `json:"logo"`
+	Background  string `json:"background"`
 	*/
 
-	s := []synagogues.Synagogue{
+	sList := []synagogues.Synagogue{
 		{User: synagogues.User{
 			Id:       0,
 			Name:     "shuva_raanana",
@@ -88,39 +118,91 @@ func main() {
 		},
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		mdb.CreateManager(db, u)
-		mdb.CreateSynagogue(db, s[0])
-		mdb.CreateSynagogue(db, s[1])
-	}()
-	wg.Wait()
-	/////
-	//Init from files
-	//functions.InitSynagogues()
-	//functions.CreatFirstDefaultConfigValuesFile()
-
-	/////
-	/*
-		var wg sync.WaitGroup
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			manager.LoopManager()
-		}()
+	/* ConfigItem
+	Name     string `json:"name"`
+	Hname    string `json:"hname"`
+	Category string `json:"category"`
+	Date     string `json:"date"`
+	Time     string `json:"time"`
+	Info     string `json:"info"`
+	On       bool   `json:"on"`
 	*/
+	clist := []synagogues.ConfigItem{
+		{
+			Name:     "minha",
+			Hname:    "מנחה",
+			Category: "תפילה",
+			Date:     "",
+			Time:     "18:00",
+			Info:     "",
+			On:       true,
+		},
+		{
+			Name:     "minha hag",
+			Hname:    "מנחה של חג",
+			Category: "תפילה",
+			Date:     "2022-07-22",
+			Time:     "17:00",
+			Info:     "",
+			On:       true,
+		},
+	}
 
-	/*
-		wg.Add(1)
-		go func(){
-			defer wg.Done()
-			go handler()
-			log.Println("Server started, press <ENTER> to exit")
-			fmt.Scanln()
-		}()
-	*/
+	fmt.Print("Step 1 - CreateDBTables \n\n")
+	mdb.CreateDBTables(db)
 
-	//wg.Wait()
+	fmt.Print("Step 2 - CreateManager \n\n")
+	mdb.CreateManager(db, u)
+
+	fmt.Print("Step 3 - CreateSynagogue \n\n")
+	for _, item := range sList {
+		mdb.CreateSynagogue(db, item)
+	}
+
+	fmt.Print("Step 4 - CreateConfigItem \n\n")
+	for _, item := range clist {
+		mdb.CreateConfigItem(db, "shuva_raanana", item)
+	}
+
+	fmt.Print("Step 5 - GetAllSynagogues \n\n")
+	newSList := mdb.GetAllSynagogues(db)
+	for _, item := range newSList {
+		fmt.Println(item)
+	}
+
+	fmt.Print("Step 6 - GetSynagogue \n\n")
+	fmt.Println(mdb.GetSynagogue(db, "shuva_raanana", "123456", "synagogue", true))
+
+	fmt.Print("Step 7 - GetConfigItems \n\n")
+	fmt.Println(mdb.GetConfigItems(db, "shuva_raanana", "2022-07-22"))
+	fmt.Println(mdb.GetConfigItems(db, "shuva_raanana", ""))
+	fmt.Println(mdb.GetConfigItems(db, "bentata", "2022-07-22"))
+	fmt.Println(mdb.GetConfigItems(db, "bentata", ""))
+	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems(db, "bentata"))
+
+	sList[0].Logo = "logo"
+	fmt.Print("Step 9 - UpdateSynagogue \n\n")
+	fmt.Println(mdb.UpdateSynagogue(db, sList[0]))
+	mdb.DeleteUser(db, "bentata")
+	fmt.Print("Step 10 - GetAllSynagogues \n\n")
+	fmt.Println(mdb.GetAllSynagogues(db))
+	clist[1].Time = "19:00"
+	fmt.Print("Step 11 - UpdateConfigItem \n\n")
+	mdb.UpdateConfigItem(db, "shuva_raanana", clist[1])
+	fmt.Print("Step 12 - GetAllConfigItems \n\n")
+	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	//fmt.Print("Step 13 - DeleteSchedules \n\n")
+	//mdb.DeleteSchedules(db, "shuva_raanana", "minha", "")
+	fmt.Print("Step 14 - GetAllConfigItems \n\n")
+	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Print("Step 15 - DeleteAllSchedulesByDate \n\n")
+	mdb.DeleteAllSchedulesByDate(db, "shuva_raanana", "2022-07-22")
+	fmt.Print("Step 16 - GetAllConfigItems \n\n")
+	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Print("Step 17 - DeleteAllSchedulesByName \n\n")
+	mdb.DeleteAllSchedulesByName(db, "shuva_raanana", "minha")
+	fmt.Print("Step 18 - GetAllConfigItems \n\n")
+	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
 
 }
