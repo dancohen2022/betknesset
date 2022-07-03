@@ -12,7 +12,7 @@ import (
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
 )
 
-const PERIOD int = 14
+const PERIOD int = 7
 
 func UpdateApiParams(api string) string {
 	fmt.Println("UpdateApiParams")

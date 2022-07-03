@@ -56,7 +56,7 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 	} else {
 
 		resString = fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
-		resString = fmt.Sprintf("Synagogue %s", s)
+		resString = fmt.Sprintf("Synagogue %v", s)
 
 		calend := functions.UpdateApiParams(s.CalendarApi)
 		zman := functions.UpdateApiParams(s.ZmanimApi)

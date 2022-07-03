@@ -19,7 +19,8 @@ func main() {
 	// Comment out the below line if you don't want to remove the database.
 	os.Remove(mdb.SYNAGOGUESDB)
 	// Open database connection
-	db, err := sql.Open("sqlite3", mdb.SYNAGOGUESDB)
+	var err error
+	mdb.DB, err = sql.Open("sqlite3", mdb.SYNAGOGUESDB)
 	// Check if database connection was opened successfully
 	if err != nil {
 		if sqlError, ok := err.(sqlite3.Error); ok {
@@ -32,8 +33,8 @@ func main() {
 		}
 	}
 	// close database connection before exiting program.
-	defer db.Close()
-	testMdbFunctions(db)
+	defer mdb.DB.Close()
+	testMdbFunctions()
 	/////
 	//Init from files
 	//functions.InitSynagogues()
@@ -63,7 +64,7 @@ func main() {
 
 }
 
-func testMdbFunctions(db *sql.DB) {
+func testMdbFunctions() {
 
 	/*User
 	Id       int64  `json:"id"`
@@ -149,60 +150,60 @@ func testMdbFunctions(db *sql.DB) {
 	}
 
 	fmt.Print("Step 1 - CreateDBTables \n\n")
-	mdb.CreateDBTables(db)
+	mdb.CreateDBTables()
 
 	fmt.Print("Step 2 - CreateManager \n\n")
-	mdb.CreateManager(db, u)
+	mdb.CreateManager(u)
 
 	fmt.Print("Step 3 - CreateSynagogue \n\n")
 	for _, item := range sList {
-		mdb.CreateSynagogue(db, item)
+		mdb.CreateSynagogue(item)
 	}
 
 	fmt.Print("Step 4 - CreateConfigItem \n\n")
 	for _, item := range clist {
-		mdb.CreateConfigItem(db, "shuva_raanana", item)
+		mdb.CreateConfigItem("shuva_raanana", item)
 	}
 
 	fmt.Print("Step 5 - GetAllSynagogues \n\n")
-	newSList := mdb.GetAllSynagogues(db)
+	newSList := mdb.GetAllSynagogues()
 	for _, item := range newSList {
 		fmt.Println(item)
 	}
 
 	fmt.Print("Step 6 - GetSynagogue \n\n")
-	fmt.Println(mdb.GetSynagogue(db, "shuva_raanana", "123456", "synagogue", true))
+	fmt.Println(mdb.GetSynagogue("shuva_raanana", "123456", "synagogue", true))
 
 	fmt.Print("Step 7 - GetConfigItems \n\n")
-	fmt.Println(mdb.GetConfigItems(db, "shuva_raanana", "2022-07-22"))
-	fmt.Println(mdb.GetConfigItems(db, "shuva_raanana", ""))
-	fmt.Println(mdb.GetConfigItems(db, "bentata", "2022-07-22"))
-	fmt.Println(mdb.GetConfigItems(db, "bentata", ""))
-	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
-	fmt.Println(mdb.GetAllConfigItems(db, "bentata"))
+	fmt.Println(mdb.GetConfigItems("shuva_raanana", "2022-07-22"))
+	fmt.Println(mdb.GetConfigItems("shuva_raanana", ""))
+	fmt.Println(mdb.GetConfigItems("bentata", "2022-07-22"))
+	fmt.Println(mdb.GetConfigItems("bentata", ""))
+	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems("bentata"))
 
 	sList[0].Logo = "logo"
 	fmt.Print("Step 9 - UpdateSynagogue \n\n")
-	fmt.Println(mdb.UpdateSynagogue(db, sList[0]))
-	mdb.DeleteUser(db, "bentata")
+	fmt.Println(mdb.UpdateSynagogue(sList[0]))
+	mdb.DeleteUser("bentata")
 	fmt.Print("Step 10 - GetAllSynagogues \n\n")
-	fmt.Println(mdb.GetAllSynagogues(db))
+	fmt.Println(mdb.GetAllSynagogues())
 	clist[1].Time = "19:00"
 	fmt.Print("Step 11 - UpdateConfigItem \n\n")
-	mdb.UpdateConfigItem(db, "shuva_raanana", clist[1])
+	mdb.UpdateConfigItem("shuva_raanana", clist[1])
 	fmt.Print("Step 12 - GetAllConfigItems \n\n")
-	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
 	//fmt.Print("Step 13 - DeleteSchedules \n\n")
-	//mdb.DeleteSchedules(db, "shuva_raanana", "minha", "")
+	//mdb.DeleteSchedules( "shuva_raanana", "minha", "")
 	fmt.Print("Step 14 - GetAllConfigItems \n\n")
-	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
 	fmt.Print("Step 15 - DeleteAllSchedulesByDate \n\n")
-	mdb.DeleteAllSchedulesByDate(db, "shuva_raanana", "2022-07-22")
+	mdb.DeleteAllSchedulesByDate("shuva_raanana", "2022-07-22")
 	fmt.Print("Step 16 - GetAllConfigItems \n\n")
-	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
 	fmt.Print("Step 17 - DeleteAllSchedulesByName \n\n")
-	mdb.DeleteAllSchedulesByName(db, "shuva_raanana", "minha")
+	mdb.DeleteAllSchedulesByName("shuva_raanana", "minha")
 	fmt.Print("Step 18 - GetAllConfigItems \n\n")
-	fmt.Println(mdb.GetAllConfigItems(db, "shuva_raanana"))
+	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
 
 }

@@ -187,4 +187,4 @@ const CONFIGFILE string = "config.txt"
 const DEFAULTCONFIGFILE string = "./files/synagogues/defaulFilesConfig.txt"
 
 // Synagogues List
-var Synagogues []Synagogue
+//var Synagogues []Synagogue

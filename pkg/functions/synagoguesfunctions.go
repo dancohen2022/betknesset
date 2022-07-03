@@ -8,28 +8,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/dancohen2022/betknesset/pkg/mdb"
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
 )
 
-func InitSynagogues() {
-
-	bFile2, err := ioutil.ReadFile(synagogues.SYNAGOGUESFILE)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = json.Unmarshal(bFile2, &synagogues.Synagogues)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func GetSynagogues() *[]synagogues.Synagogue {
-	fmt.Printf("synagogues: %v\n\n\n", synagogues.Synagogues)
-	return &synagogues.Synagogues
-}
-
 func ResetSynagogueSchedule(name string) bool {
-	for _, s := range synagogues.Synagogues {
+	sList := mdb.GetAllSynagogues()
+	for _, s := range sList {
 		if s.User.Name == name {
 			//Create Dir If doesnt exist yet
 			UpdateDirs(name)
@@ -58,7 +43,7 @@ func GetDaySynagogueScheduleJSON(name string) {
 func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	// Used for User Login  with Name and Key
 	fmt.Println("SynagogueExist")
-	syn := synagogues.Synagogues
+	syn := mdb.GetAllSynagogues()
 	b := synagogues.Synagogue{}
 	for _, s := range syn {
 		if (s.User.Name == name) && (s.User.Key == key) {
@@ -149,4 +134,11 @@ func CreatFirstDefaultConfigValuesFile() {
 	}
 
 	fmt.Println("done")
+}
+
+func GetLogoName(name string) string {
+	return "logo_" + name
+}
+func GetBackgroundName(name string) string {
+	return "background_" + name
 }

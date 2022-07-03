@@ -15,7 +15,9 @@ import (
 
 const SYNAGOGUESDB = "synagogues.db"
 
-func CreateDBTables(db *sql.DB) {
+var DB *sql.DB
+
+func CreateDBTables() {
 
 	// both manager and synagogues are saved in the same users table
 
@@ -43,7 +45,7 @@ func CreateDBTables(db *sql.DB) {
 
 	//`DELETE FROM users;
 	//`
-	_, err := db.Exec(sqlStmt)
+	_, err := DB.Exec(sqlStmt)
 	if err != nil {
 		if sqlError, ok := err.(sqlite3.Error); ok {
 			// code 1 == "table already exists"
@@ -67,7 +69,7 @@ func CreateDBTables(db *sql.DB) {
 		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, date TEXT, info TEXT);
 		`
 	// Execute the SQL statement
-	_, err = db.Exec(sqlStmt)
+	_, err = DB.Exec(sqlStmt)
 
 	if err != nil {
 		if sqlError, ok := err.(sqlite3.Error); ok {
@@ -150,7 +152,7 @@ func ConfigItemFromRow(row *sql.Rows) (synagogues.ConfigItem, error) {
 // CreateManager, CreateSynagogue, CreateConfigItem
 
 //ADD Manager (synagogue)
-func CreateManager(db *sql.DB, u synagogues.User) synagogues.User {
+func CreateManager(u synagogues.User) synagogues.User {
 
 	user := synagogues.User{}
 
@@ -168,7 +170,7 @@ func CreateManager(db *sql.DB, u synagogues.User) synagogues.User {
 	*/
 	sqlStmt := `INSERT INTO users (name , key, type, config, active, zmanimApi, calendarApi, logo, background)
 	VALUES(?, ?, ?, ?, ?, ?, ?, ?,?)`
-	_, err := db.Exec(sqlStmt, u.Name, u.Key, "manager", "", true, "", "", "", "")
+	_, err := DB.Exec(sqlStmt, u.Name, u.Key, "manager", "", true, "", "", "", "")
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return user
@@ -178,7 +180,7 @@ func CreateManager(db *sql.DB, u synagogues.User) synagogues.User {
 }
 
 //ADD SYNAGOGUE (synagogue)
-func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
+func CreateSynagogue(s synagogues.Synagogue) synagogues.Synagogue {
 
 	synagogue := synagogues.Synagogue{}
 
@@ -196,7 +198,7 @@ func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
 	*/
 	sqlStmt := `INSERT INTO users (name , key, type, active, config, zmanimApi, calendarApi, logo, background)
 	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, s.User.Name, s.User.Key, "synagogue", true, "", s.ZmanimApi, s.CalendarApi, "", "")
+	_, err := DB.Exec(sqlStmt, s.User.Name, s.User.Key, "synagogue", true, "", s.ZmanimApi, s.CalendarApi, "", "")
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return synagogue
@@ -206,7 +208,7 @@ func CreateSynagogue(db *sql.DB, s synagogues.Synagogue) synagogues.Synagogue {
 }
 
 //CREATE schedule rom schedule list
-func CreateConfigItem(db *sql.DB, synagogue_name string, c synagogues.ConfigItem) synagogues.ConfigItem {
+func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues.ConfigItem {
 	confItem := synagogues.ConfigItem{}
 
 	/*schedules
@@ -221,7 +223,7 @@ func CreateConfigItem(db *sql.DB, synagogue_name string, c synagogues.ConfigItem
 
 	sqlStmt := `INSERT INTO schedules (synagogue_name ,name, date, info)
 	VALUES(?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Date, j)
+	_, err := DB.Exec(sqlStmt, synagogue_name, c.Name, c.Date, j)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return confItem
@@ -234,9 +236,9 @@ func CreateConfigItem(db *sql.DB, synagogue_name string, c synagogues.ConfigItem
 // GetManager, GetSynagogue,GetConfigItems
 
 //GET Synagogues BY User name and key - return []Synagogue but only 1 item
-func GetSynagogue(db *sql.DB, name string, key string, typ string, active bool) []synagogues.Synagogue {
+func GetSynagogue(name string, key string, typ string, active bool) []synagogues.Synagogue {
 	synagogues := []synagogues.Synagogue{}
-	rows, err := db.Query(
+	rows, err := DB.Query(
 		`
 		SELECT id, name, key, type, active, config, zmanimApi, calendarApi, logo, background
 		FROM users
@@ -262,9 +264,9 @@ func GetSynagogue(db *sql.DB, name string, key string, typ string, active bool) 
 }
 
 //GET all users (synagogues format) - return slice of users
-func GetAllSynagogues(db *sql.DB) []synagogues.Synagogue {
+func GetAllSynagogues() []synagogues.Synagogue {
 	synagogues := []synagogues.Synagogue{}
-	rows, err := db.Query(
+	rows, err := DB.Query(
 		`
 		SELECT id, name, key, type, active, config, zmanimApi, calendarApi, logo, background
 		FROM users
@@ -289,7 +291,7 @@ func GetAllSynagogues(db *sql.DB) []synagogues.Synagogue {
 }
 
 //GET ConfigItems BY synagogue name and date - return ConfigItem
-func GetConfigItems(db *sql.DB, synagogueName string, date string) []synagogues.ConfigItem {
+func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -300,7 +302,7 @@ func GetConfigItems(db *sql.DB, synagogueName string, date string) []synagogues.
 	  info string (json) //JSON with all the schedules
 	*/
 
-	rows, err := db.Query(
+	rows, err := DB.Query(
 		`
 		SELECT id, synagogue_name, name, date, info
 		FROM schedules
@@ -326,7 +328,7 @@ func GetConfigItems(db *sql.DB, synagogueName string, date string) []synagogues.
 }
 
 //GET ConfigItems BY synagogue name and date - return ConfigItem
-func GetAllConfigItems(db *sql.DB, synagogueName string) []synagogues.ConfigItem {
+func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -337,7 +339,7 @@ func GetAllConfigItems(db *sql.DB, synagogueName string) []synagogues.ConfigItem
 	  info string (json) //JSON with all the schedules
 	*/
 
-	rows, err := db.Query(
+	rows, err := DB.Query(
 		`
 		SELECT id, synagogue_name, name, date, info
 		FROM schedules
@@ -365,25 +367,25 @@ func GetAllConfigItems(db *sql.DB, synagogueName string) []synagogues.ConfigItem
 /////// UPDATE
 
 // UPDATE  user and synagogue manager return user
-func UpdateSynagogue(db *sql.DB, s synagogues.Synagogue) []synagogues.Synagogue {
+func UpdateSynagogue(s synagogues.Synagogue) []synagogues.Synagogue {
 	synagogues := []synagogues.Synagogue{}
 	sqlStmt := `
 	UPDATE users SET  key=?, type=?, active=?, config=?, zmanimApi=?, calendarApi=?, logo=?, background=?
 	WHERE name = ?
 	`
-	_, err := db.Exec(sqlStmt, s.User.Key, s.User.UserType, s.User.Active, s.Config, s.ZmanimApi, s.CalendarApi, s.Logo,
+	_, err := DB.Exec(sqlStmt, s.User.Key, s.User.UserType, s.User.Active, s.Config, s.ZmanimApi, s.CalendarApi, s.Logo,
 		s.Background, s.User.Name)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return synagogues
 	}
 
-	return GetSynagogue(db, s.User.Name, s.User.Key, s.User.UserType, s.User.Active)
+	return GetSynagogue(s.User.Name, s.User.Key, s.User.UserType, s.User.Active)
 }
 
 // UPDATE  schedule BY date - return schedule
 
-func UpdateConfigItem(db *sql.DB, synagogueName string, c synagogues.ConfigItem) []synagogues.ConfigItem {
+func UpdateConfigItem(synagogueName string, c synagogues.ConfigItem) []synagogues.ConfigItem {
 	configItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -399,18 +401,18 @@ func UpdateConfigItem(db *sql.DB, synagogueName string, c synagogues.ConfigItem)
 	UPDATE schedules SET  info=?
 	WHERE synagogue_name = ? AND name = ? AND date = ?
 	`
-	_, err := db.Exec(sqlStmt, string(j), synagogueName, c.Name, c.Date)
+	_, err := DB.Exec(sqlStmt, string(j), synagogueName, c.Name, c.Date)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return configItems
 	}
 
-	return GetConfigItems(db, synagogueName, c.Date)
+	return GetConfigItems(synagogueName, c.Date)
 }
 
 /////// DELETE
 // DELETE user BY name
-func DeleteUser(db *sql.DB, name string) error {
+func DeleteUser(name string) error {
 	if name == "" {
 		name = "*"
 	}
@@ -419,7 +421,7 @@ func DeleteUser(db *sql.DB, name string) error {
 	DELETE FROM users
 	WHERE name = ? 
 	`
-	_, err := db.Exec(sqlStmt, name)
+	_, err := DB.Exec(sqlStmt, name)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return err
@@ -429,7 +431,7 @@ func DeleteUser(db *sql.DB, name string) error {
 	DELETE FROM schedules
 	WHERE synagogue_name = ? 
 	`
-	_, err = db.Exec(sqlStmt, name)
+	_, err = DB.Exec(sqlStmt, name)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return err
@@ -440,13 +442,13 @@ func DeleteUser(db *sql.DB, name string) error {
 
 //DELETE schedule BY synagogue_name, name, date
 //DELETE schedule BY date
-func DeleteSchedules(db *sql.DB, synagogue_name, name, date string) error {
+func DeleteSchedules(synagogue_name, name, date string) error {
 
 	sqlStmt := `
 	DELETE FROM schedules
 	WHERE synagogue_name = ? AND name = ? AND date  = ?
 	`
-	_, err := db.Exec(sqlStmt, synagogue_name, name, date)
+	_, err := DB.Exec(sqlStmt, synagogue_name, name, date)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return err
@@ -455,13 +457,13 @@ func DeleteSchedules(db *sql.DB, synagogue_name, name, date string) error {
 	return nil
 }
 
-func DeleteAllSchedulesByName(db *sql.DB, synagogue_name, name string) error {
+func DeleteAllSchedulesByName(synagogue_name, name string) error {
 
 	sqlStmt := `
 	DELETE FROM schedules
 	WHERE synagogue_name = ? AND name = ?
 	`
-	_, err := db.Exec(sqlStmt, synagogue_name, name)
+	_, err := DB.Exec(sqlStmt, synagogue_name, name)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return err
@@ -470,13 +472,13 @@ func DeleteAllSchedulesByName(db *sql.DB, synagogue_name, name string) error {
 	return nil
 }
 
-func DeleteAllSchedulesByDate(db *sql.DB, synagogue_name, date string) error {
+func DeleteAllSchedulesByDate(synagogue_name, date string) error {
 
 	sqlStmt := `
 	DELETE FROM schedules
 	WHERE synagogue_name = ? AND date  = ?
 	`
-	_, err := db.Exec(sqlStmt, synagogue_name, date)
+	_, err := DB.Exec(sqlStmt, synagogue_name, date)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return err
