@@ -1,12 +1,12 @@
 package synagogues
 
 type Item interface {
-	ParseItem() []DailyItem
+	ParseItem() []ConfigItem
 }
 
-func ParseItemsList(items []Item) []DailyItem {
+func ParseItemsList(items []Item) []ConfigItem {
 	lst := items
-	lst_daily := []DailyItem{}
+	lst_daily := []ConfigItem{}
 	for _, v := range lst {
 		d := v.ParseItem()
 		lst_daily = append(lst_daily, d...)
@@ -14,20 +14,21 @@ func ParseItemsList(items []Item) []DailyItem {
 	return lst_daily
 }
 
-func (item CalendarItems) ParseItem() []DailyItem {
-	var d DailyItem
+func (item CalendarItems) ParseItem() []ConfigItem {
+	var d ConfigItem
 	d.Category = item.Category
 	d.Date = item.Date
-	d.Hebrew = item.Hebrew
-	d.Memo = item.Memo
+	d.Hname = item.Hebrew
+	d.Info = item.Memo
 	d.Name = item.Title
 	d.Subcat = item.Subcat
 	d.Time = ""
-	return append([]DailyItem{}, d)
+	d.On = true
+	return append([]ConfigItem{}, d)
 }
 
-func (item ZmanimJson) ParseItem() []DailyItem {
-	lst := []DailyItem{}
+func (item ZmanimJson) ParseItem() []ConfigItem {
+	lst := []ConfigItem{}
 	timesMap := GetItemsTimeMap(item.Times)
 
 	for key1, val1 := range timesMap {
@@ -35,14 +36,15 @@ func (item ZmanimJson) ParseItem() []DailyItem {
 		for key2, val2 := range val1 {
 			k := key2
 			v := val2
-			var d DailyItem
+			var d ConfigItem
 			d.Category = "dailyTimes"
 			d.Date = k
-			d.Hebrew = SetHebrewName(name)
-			d.Memo = ""
+			d.Hname = SetHebrewName(name)
+			d.Info = ""
 			d.Name = name
 			d.Subcat = ""
 			d.Time = v
+			d.On = true
 			lst = append(lst, d)
 		}
 	}

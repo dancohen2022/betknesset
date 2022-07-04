@@ -1,5 +1,6 @@
 package synagogues
 
+/////// DB TABLES ?????
 // Basic user
 type User struct {
 	Id       int64  `json:"id"`
@@ -19,48 +20,20 @@ type Synagogue struct {
 	Background  string `json:"background"`
 }
 
-// Final Daily Schedules
-type DailyScheduleJson struct {
-	Title      string      `json:"title"`
-	Date       string      `json:"date"`
-	Hdate      string      `json:"hdate"`
-	DailyItems []DailyItem `json:"dailyitems"`
-}
-
-type DailyItem struct {
-	Name     string `json:"title"`
-	Date     string `json:"date"`
-	Hebrew   string `json:"hebrew"`
-	Category string `json:"category"` //tfila, shiour
-	Subcat   string `json:"subcat"`   //fast
-	Time     string `json:"time"`
-	Memo     string `json:"memo"`
-}
-
-// Parse Configuration File
-type ConfigJson struct {
-	Info    ConfigInfo   `json:"info"`
-	Default []ConfigItem `json:"default"`
-	Items   []ConfigItem `json:"items"`
-}
-
-type ConfigInfo struct {
-	Name       string `json:"name"`
-	Hname      string `json:"hname"`
-	Logo       string `json:"logo"`
-	Background string `json:"background"`
-	Message    string `json:"message"`
-}
+// ConfigItem -  Daily item
 
 type ConfigItem struct {
 	Name     string `json:"name"`
 	Hname    string `json:"hname"`
 	Category string `json:"category"`
+	Subcat   string `json:"subcategory"`
 	Date     string `json:"date"`
 	Time     string `json:"time"`
 	Info     string `json:"info"`
 	On       bool   `json:"on"`
 }
+
+/////////
 
 // Parse Calendar API results
 type CalendarJson struct {
@@ -180,11 +153,4 @@ type ZmanimTimeItem struct {
 
 // End of Structures
 
-const SYNAGOGUESPATH string = "./files/synagogues/"
-const SYNAGOGUESFILE string = "./files/synagogues/synagogues.txt"
-const CONFIGPATH string = "/configuration/"
-const CONFIGFILE string = "config.txt"
-const DEFAULTCONFIGFILE string = "./files/synagogues/defaulFilesConfig.txt"
-
-// Synagogues List
-//var Synagogues []Synagogue
+const FILESDIR string = "files"

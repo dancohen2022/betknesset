@@ -63,7 +63,7 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 
 		functions.UpdateDirs(name)
 
-		functions.UpdateFiles(name, functions.GetSynagogueHttpJson(calend), functions.GetSynagogueHttpJson(zman), functions.GetSynagogueConfigJson(name))
+		functions.UpdateSynagogueSchedule(name)
 
 		resString = resString + functions.GetSynagogueHttpJson(calend) + "\n\n\n\n" + functions.GetSynagogueHttpJson(zman)
 	}

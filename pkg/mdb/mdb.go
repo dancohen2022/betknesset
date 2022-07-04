@@ -486,3 +486,18 @@ func DeleteAllSchedulesByDate(synagogue_name, date string) error {
 
 	return nil
 }
+
+func DeleteAllSynagogueSchedules(synagogue_name string) error {
+
+	sqlStmt := `
+	DELETE FROM schedules
+	WHERE synagogue_name = ?
+	`
+	_, err := DB.Exec(sqlStmt, synagogue_name)
+	if err != nil {
+		log.Printf("%q: %s\n", err, sqlStmt)
+		return err
+	}
+
+	return nil
+}

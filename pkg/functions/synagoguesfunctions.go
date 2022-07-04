@@ -1,12 +1,8 @@
 package functions
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
 
 	"github.com/dancohen2022/betknesset/pkg/mdb"
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
@@ -15,20 +11,16 @@ import (
 func ResetSynagogueSchedule(name string) bool {
 	sList := mdb.GetAllSynagogues()
 	for _, s := range sList {
+		syn := s
 		if s.User.Name == name {
-			//Create Dir If doesnt exist yet
-			UpdateDirs(name)
-
-			//Delete all files
-			if DeleteAllFiles(name) != nil {
-				fmt.Println("Couldn't delete files")
-				return false
-			}
+			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
 			//Update API period and other constants
-			calend := UpdateApiParams(s.CalendarApi)
-			zman := UpdateApiParams(s.ZmanimApi)
+			calend := UpdateApiParams(syn.CalendarApi)
+			zman := UpdateApiParams(syn.ZmanimApi)
 
-			UpdateFiles(name, GetSynagogueHttpJson(calend), GetSynagogueHttpJson(zman), GetSynagogueConfigJson(name))
+			UpdateCalendarJSON(name, calend)
+			UpdateZmanimJSON(name, zman)
+			UpdateDefaultConfigItemsList(name)
 
 			return true
 		}
@@ -36,8 +28,23 @@ func ResetSynagogueSchedule(name string) bool {
 	return false
 }
 
-func GetDaySynagogueScheduleJSON(name string) {
+func UpdateSynagogueSchedule(name string) bool {
+	sList := mdb.GetAllSynagogues()
+	for _, s := range sList {
+		syn := s
+		if s.User.Name == name {
+			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
+			//Update API period and other constants
+			calend := UpdateApiParams(syn.CalendarApi)
+			zman := UpdateApiParams(syn.ZmanimApi)
 
+			UpdateCalendarJSON(name, calend)
+			UpdateZmanimJSON(name, zman)
+
+			return true
+		}
+	}
+	return false
 }
 
 func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
@@ -57,88 +64,55 @@ func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 	return b, errors.New("Synagogue doesn't exist")
 }
 
-func InitSSynagogueConfig(synagogue synagogues.Synagogue) *synagogues.ConfigJson {
-
-	var config synagogues.ConfigJson
-	/*
-		c := ReadFile(SYNAGOGUESPATH, synagogue.Name, CONFIGPATH, CONFIGPATH)
-		if c == []byte{} then{
-			func SetConfigDefValues(&config)
-
-		}
-		err = json.Unmarshal(bFile2, &synagogues)
-		if err != nil {
-			log.Fatalln(err)
-		}
+func GetDefaultConfigItemsList() []synagogues.ConfigItem {
+	/*ConfigItem
+	Name     string `json:"name"`
+	Hname    string `json:"hname"`
+	Category string `json:"category"`
+	Subcat   string `json:"subcategory"`
+	Date     string `json:"date"`
+	Time     string `json:"time"`
+	Info     string `json:"info"`
+	On       bool   `json:"on"`
 	*/
-	return &config
+	cIList := []synagogues.ConfigItem{}
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekChacharit1", Hname: "תפילת שחרית 1", Category: "tfilot", Date: "", Time: "07:00", Info: "תפילת שחרית", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekChacharit2", Hname: "תפילת שחרית 2", Category: "tfilot", Date: "", Time: "06:00", Info: "תפילת שחרית", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekMincha1", Hname: "תפילת מנחה 1", Category: "tfilot", Date: "", Time: "19:00", Info: "תפילת מנחה", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekMincha2", Hname: "תפילת מנחה 2", Category: "tfilot", Date: "", Time: "15:00", Info: "תפילת מנחה", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekArvit1", Hname: "תפילת ערבית 1", Category: "tfilot", Date: "", Time: "20:00", Info: "תפילת ערבית", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "WeekArvit2", Hname: "תפילת ערבית 2", Category: "tfilot", Date: "", Time: "21:00", Info: "תפילת ערבית", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "ErevShabbatMincha", Hname: "תפילת מנחה ערב שבת", Category: "tfilot", Date: "", Time: "18:00", Info: "תפילת מנחה ערב שבת", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "ShabbatArvit1", Hname: "תפילת ערבית של שבת", Category: "tfilot", Date: "", Time: "18:00", Info: "תפילת ערבית של שבת", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "ShabbatChacharit", Hname: "תפילת שחרית של שבת", Category: "tfilot", Date: "", Time: "08:00", Info: "תפילת שחרית של שבת", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "ShabbatMinha1", Hname: "תפילת מנחה של שבת", Category: "tfilot", Date: "", Time: "17:00", Info: "תפילת מנחה של שבת", On: true})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "ShabbatMinha2", Hname: "תפילת מנחה של שבת", Category: "tfilot", Date: "", Time: "14:00", Info: "תפילת מנחה של שבת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialChacharit1", Hname: "תפילת שחרית מיוחדת", Category: "tfilot", Date: "", Time: "08:00", Info: "תפילת שחרית מיוחדת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialChacharit2", Hname: "תפילת שחרית מיוחדת", Category: "tfilot", Date: "", Time: "09:00", Info: "תפילת שחרית מיוחדת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialMincha1", Hname: "תפילת מנחה מיוחדת", Category: "tfilot", Date: "", Time: "16:00", Info: "תפילת מנחה מיוחדת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialMincha2", Hname: "תפילת מנחה מיוחדת", Category: "tfilot", Date: "", Time: "17:00", Info: "תפילת מנחה מיוחדת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialArvit1", Hname: "תפילת ערבית מיוחדת", Category: "tfilot", Date: "", Time: "21:00", Info: "תפילת ערבית מיוחדת", On: false})
+	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialArvit1", Hname: "תפילת ערבית מיוחדת", Category: "tfilot", Date: "", Time: "222:00", Info: "תפילת ערבית מיוחדת", On: false})
+
+	return cIList
+
 }
 
-func SetConfigDefValues(synagogues.ConfigJson) *[]synagogues.ConfigItem {
-	s, err := ioutil.ReadFile(synagogues.DEFAULTCONFIGFILE)
-	c := []synagogues.ConfigItem{}
-	if err != nil {
-		return &c
-	}
-
-	err = json.Unmarshal([]byte(s), &c)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return &c
+func GetLogoName(synName string) string {
+	return "logo_" + synName
+}
+func GetBackgroundName(synName string) string {
+	return "background_" + synName
 }
 
-func CreatFirstDefaultConfigValuesFile() {
-	c := synagogues.ConfigJson{}
-	c.Info.Name = "Synagogue Name"
-	c.Info.Hname = "שם בית כנסת"
-	c.Info.Logo = "logo"
-	c.Info.Background = "background"
-	c.Info.Message = "about the synagogue"
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekChacharit1", Hname: "תפילת שחרית 1", Category: "tfilot", Date: "", Time: "07:00", Info: "תפילת שחרית", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekChacharit2", Hname: "תפילת שחרית 2", Category: "tfilot", Date: "", Time: "06:00", Info: "תפילת שחרית", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekMincha1", Hname: "תפילת מנחה 1", Category: "tfilot", Date: "", Time: "19:00", Info: "תפילת מנחה", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekMincha2", Hname: "תפילת מנחה 2", Category: "tfilot", Date: "", Time: "15:00", Info: "תפילת מנחה", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekArvit1", Hname: "תפילת ערבית 1", Category: "tfilot", Date: "", Time: "20:00", Info: "תפילת ערבית", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "WeekArvit2", Hname: "תפילת ערבית 2", Category: "tfilot", Date: "", Time: "21:00", Info: "תפילת ערבית", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "ErevShabbatMincha", Hname: "תפילת מנחה ערב שבת", Category: "tfilot", Date: "", Time: "18:00", Info: "תפילת מנחה ערב שבת", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "ShabbatArvit1", Hname: "תפילת ערבית של שבת", Category: "tfilot", Date: "", Time: "18:00", Info: "תפילת ערבית של שבת", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "ShabbatChacharit", Hname: "תפילת שחרית של שבת", Category: "tfilot", Date: "", Time: "08:00", Info: "תפילת שחרית של שבת", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "ShabbatMinha1", Hname: "תפילת מנחה של שבת", Category: "tfilot", Date: "", Time: "17:00", Info: "תפילת מנחה של שבת", On: true})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "ShabbatMinha2", Hname: "תפילת מנחה של שבת", Category: "tfilot", Date: "", Time: "14:00", Info: "תפילת מנחה של שבת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialChacharit1", Hname: "תפילת שחרית מיוחדת", Category: "tfilot", Date: "", Time: "08:00", Info: "תפילת שחרית מיוחדת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialChacharit2", Hname: "תפילת שחרית מיוחדת", Category: "tfilot", Date: "", Time: "09:00", Info: "תפילת שחרית מיוחדת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialMincha1", Hname: "תפילת מנחה מיוחדת", Category: "tfilot", Date: "", Time: "16:00", Info: "תפילת מנחה מיוחדת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialMincha2", Hname: "תפילת מנחה מיוחדת", Category: "tfilot", Date: "", Time: "17:00", Info: "תפילת מנחה מיוחדת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialArvit1", Hname: "תפילת ערבית מיוחדת", Category: "tfilot", Date: "", Time: "21:00", Info: "תפילת ערבית מיוחדת", On: false})
-	c.Default = append(c.Default, synagogues.ConfigItem{Name: "SpecialArvit1", Hname: "תפילת ערבית מיוחדת", Category: "tfilot", Date: "", Time: "222:00", Info: "תפילת ערבית מיוחדת", On: false})
+func UpdateCalendarJSON(synName, calend string) {
 
-	// Marshal, Create and Save
-	b, err := json.Marshal(c)
-	if err != nil {
-		log.Fatalln("Can 't Marshak Configuration Default file")
-	}
-
-	f, err := os.Create(synagogues.DEFAULTCONFIGFILE)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer f.Close()
-
-	_, err2 := f.WriteString(string(b))
-
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
-	fmt.Println("done")
 }
 
-func GetLogoName(name string) string {
-	return "logo_" + name
+func UpdateZmanimJSON(synName, zman string) {
+
 }
-func GetBackgroundName(name string) string {
-	return "background_" + name
+
+func UpdateDefaultConfigItemsList(synName string) {
+
 }

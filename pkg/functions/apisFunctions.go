@@ -54,7 +54,6 @@ func UpdateFiles(name, calend, zman, config string) {
 	*/
 	cld := synagogues.CalendarJson{}
 	zmn := synagogues.ZmanimJson{}
-	cnf := synagogues.ConfigJson{}
 
 	err := json.Unmarshal([]byte(calend), &cld)
 	if err != nil {
@@ -66,10 +65,6 @@ func UpdateFiles(name, calend, zman, config string) {
 		log.Fatalln(err)
 	}
 
-	err = json.Unmarshal([]byte(config), &cnf)
-	if err != nil {
-		log.Fatalln(err)
-	}
 	/*
 		fmt.Printf("v: %v\n\n", v)
 		fmt.Printf("V chatzot %v\n\n", v.Times.Chatzot)
@@ -91,12 +86,4 @@ func GetSynagogueHttpJson(link string) string {
 		fmt.Printf("Error %s", err)
 	}
 	return string(body)
-}
-
-func GetSynagogueConfigJson(name string) string {
-	fmt.Println("GetSynagogueConfigJson")
-
-	resp := ReadFile(name, synagogues.CONFIGFILE)
-	return string(*resp)
-
 }
