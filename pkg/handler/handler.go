@@ -60,12 +60,14 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 
 		calend := functions.UpdateApiParams(s.CalendarApi)
 		zman := functions.UpdateApiParams(s.ZmanimApi)
+		fmt.Println(calend)
+		fmt.Println(zman)
 
 		functions.UpdateDirs(name)
 
 		functions.UpdateSynagogueSchedule(name)
 
-		resString = resString + functions.GetSynagogueHttpJson(calend) + "\n\n\n\n" + functions.GetSynagogueHttpJson(zman)
+		//resString = resString + functions.GetSynagogueHttpJson(calend) + "\n\n\n\n" + functions.GetSynagogueHttpJson(zman)
 	}
 	res.Write([]byte(resString))
 

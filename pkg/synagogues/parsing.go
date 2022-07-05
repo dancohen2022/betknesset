@@ -1,35 +1,25 @@
 package synagogues
 
-type Item interface {
-	ParseItem() []ConfigItem
-}
-
-func ParseItemsList(items []Item) []ConfigItem {
-	lst := items
-	lst_daily := []ConfigItem{}
-	for _, v := range lst {
-		d := v.ParseItem()
-		lst_daily = append(lst_daily, d...)
+func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
+	newList := []ConfigItem{}
+	for _, item := range cList {
+		var c ConfigItem
+		c.Category = item.Category
+		c.Date = item.Date
+		c.Hname = item.Hebrew
+		c.Info = item.Memo
+		c.Name = item.Title
+		c.Subcat = item.Subcat
+		c.Time = ""
+		c.On = true
+		newList = append(newList, c)
 	}
-	return lst_daily
+	return newList
 }
 
-func (item CalendarItems) ParseItem() []ConfigItem {
-	var d ConfigItem
-	d.Category = item.Category
-	d.Date = item.Date
-	d.Hname = item.Hebrew
-	d.Info = item.Memo
-	d.Name = item.Title
-	d.Subcat = item.Subcat
-	d.Time = ""
-	d.On = true
-	return append([]ConfigItem{}, d)
-}
-
-func (item ZmanimJson) ParseItem() []ConfigItem {
+func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
 	lst := []ConfigItem{}
-	timesMap := GetItemsTimeMap(item.Times)
+	timesMap := GetItemsTimeMap(zm.Times)
 
 	for key1, val1 := range timesMap {
 		name := key1

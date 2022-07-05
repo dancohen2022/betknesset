@@ -73,10 +73,10 @@ func UpdateFiles(name, calend, zman, config string) {
 	//get new JSON, parse and create new files
 }
 
-func GetSynagogueHttpJson(link string) string {
+func GetSynagogueHttpJson(api string) []byte {
 	fmt.Println("GetSynagogueHttpJson")
 
-	resp, err := http.Get(link)
+	resp, err := http.Get(api)
 	if err != nil {
 		panic(err)
 	}
@@ -85,5 +85,37 @@ func GetSynagogueHttpJson(link string) string {
 	if err != nil {
 		fmt.Printf("Error %s", err)
 	}
-	return string(body)
+	return body
+}
+
+func GetLogoName(synName string) string {
+	return "logo_" + synName
+}
+func GetBackgroundName(synName string) string {
+	return "background_" + synName
+}
+
+func UpdateCalendarJSON(synName, calendAPI string) {
+	jByte := GetSynagogueHttpJson(calendAPI)
+	calJson := synagogues.CalendarJson{}
+	err := json.Unmarshal(jByte, &calJson)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	synagogues.ParseCalendarItemsToConfigItems(calJson.Items)
+}
+
+func UpdateZmanimJSON(synName, zmanAPI string) {
+	jByte := GetSynagogueHttpJson(zmanAPI)
+	zmanJson := synagogues.ZmanimJson{}
+	err := json.Unmarshal(jByte, &zmanJson)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	synagogues.ParseZmanimJsonToConfigItems(zmanJson)
+
+}
+
+func UpdateDefaultConfigItemsList(synName string) {
+
 }
