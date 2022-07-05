@@ -19,8 +19,7 @@ func main() {
 	// Comment out the below line if you don't want to remove the database.
 	os.Remove(mdb.SYNAGOGUESDB)
 	// Open database connection
-	var err error
-	mdb.DB, err = sql.Open("sqlite3", mdb.SYNAGOGUESDB)
+	db, err := sql.Open("sqlite3", mdb.SYNAGOGUESDB)
 	// Check if database connection was opened successfully
 	if err != nil {
 		if sqlError, ok := err.(sqlite3.Error); ok {
@@ -33,7 +32,8 @@ func main() {
 		}
 	}
 	// close database connection before exiting program.
-	defer mdb.DB.Close()
+	mdb.SetDb(db)
+	defer db.Close()
 	testMdbFunctions()
 	/////
 	//Init from files
@@ -150,7 +150,7 @@ func testMdbFunctions() {
 	}
 
 	fmt.Print("Step 1 - CreateDBTables \n\n")
-	mdb.CreateDBTables()
+	mdb.CreateDbTables()
 
 	fmt.Print("Step 2 - CreateManager \n\n")
 	mdb.CreateManager(u)
