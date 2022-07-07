@@ -81,8 +81,8 @@ func CreateDbTables() {
 	*/
 	fmt.Println("sqlStmt = CREATE TABLE schedules")
 	sqlStmt = `
-		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, hname TEXT,category TEXT
-			cubcat TEXT, date TEXT, time TEXT ,info TEXT, on bool)
+		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, hname TEXT,category TEXT,
+			subcat TEXT, date TEXT, time TEXT ,info TEXT, on BOOLEAN)
 		`
 	// Execute the SQL statement
 	_, err = db.Exec(sqlStmt)
@@ -245,10 +245,9 @@ func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues
 	On       bool
 	*/
 
-	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category 
-		subcat , date , time  info ,on )
+	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category ,subcat , date , time , info ,on )
 	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c, c.Time, c.Info, c.On)
+	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c.Time, c.Info, c.On)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return confItem

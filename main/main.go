@@ -37,7 +37,7 @@ func main() {
 	defer db.Close()
 	testMdbFunctions()
 	//testUpdateSynagogueSchedule()
-	testResetSynagogueSchedule()
+	//testResetSynagogueSchedule()
 	/////
 	//Init from files
 	//functions.InitSynagogues()
