@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/dancohen2022/betknesset/pkg/functions"
 	"github.com/dancohen2022/betknesset/pkg/mdb"
 	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	"github.com/mattn/go-sqlite3"
@@ -34,7 +35,8 @@ func main() {
 	// close database connection before exiting program.
 	mdb.SetDb(db)
 	defer db.Close()
-	testMdbFunctions()
+	//testMdbFunctions()
+	testUpdateSynagogueSchedule()
 	/////
 	//Init from files
 	//functions.InitSynagogues()
@@ -206,4 +208,8 @@ func testMdbFunctions() {
 	fmt.Print("Step 18 - GetAllConfigItems \n\n")
 	fmt.Println(mdb.GetAllConfigItems("shuva_raanana"))
 
+}
+
+func testUpdateSynagogueSchedule() {
+	functions.UpdateSynagogueSchedule("shuva_raanana")
 }

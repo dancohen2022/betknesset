@@ -14,7 +14,7 @@ import (
 
 const PERIOD int = 7
 
-func UpdateApiParams(api string) string {
+func UpdateApiParamsPeriod(api string) string {
 	fmt.Println("UpdateApiParams")
 	//Files limited period
 
@@ -102,6 +102,7 @@ func UpdateCalendarJSON(synName, calendAPI string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Printf("calJson: %v", calJson)
 	synagogues.ParseCalendarItemsToConfigItems(calJson.Items)
 }
 
