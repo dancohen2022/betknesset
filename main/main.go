@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/dancohen2022/betknesset/pkg/functions"
 	"github.com/dancohen2022/betknesset/pkg/mdb"
@@ -18,7 +17,7 @@ func main() {
 	///// OPEN DATABASE CONNECTION
 	// Remove the todo database file if exists.
 	// Comment out the below line if you don't want to remove the database.
-	os.Remove(mdb.SYNAGOGUESDB)
+	//os.Remove(mdb.SYNAGOGUESDB)
 	// Open database connection
 	db, err := sql.Open("sqlite3", mdb.SYNAGOGUESDB)
 	// Check if database connection was opened successfully
@@ -37,11 +36,11 @@ func main() {
 	defer db.Close()
 
 	fmt.Print("Step 1 - CreateDBTables \n\n")
-	mdb.CreateDbTables()
+	//mdb.CreateDbTables()
 
-	testMdbFunctions()
+	//testMdbFunctions()
 	//testUpdateSynagogueSchedule()
-	//testResetSynagogueSchedule()
+	testResetSynagogueSchedule()
 	/////
 	//Init from files
 	//functions.InitSynagogues()
@@ -130,16 +129,19 @@ func testMdbFunctions() {
 	Name     string `json:"name"`
 	Hname    string `json:"hname"`
 	Category string `json:"category"`
+	Subcat   string `json:"subcategory"`
 	Date     string `json:"date"`
 	Time     string `json:"time"`
 	Info     string `json:"info"`
-	On       bool   `json:"on"`
+	Active   bool   `json:"true"`
 	*/
+
 	clist := []synagogues.ConfigItem{
 		{
 			Name:     "minha",
 			Hname:    "מנחה",
 			Category: "תפילה",
+			Subcat:   "",
 			Date:     "",
 			Time:     "18:00",
 			Info:     "",
@@ -149,6 +151,7 @@ func testMdbFunctions() {
 			Name:     "minha hag",
 			Hname:    "מנחה של חג",
 			Category: "תפילה",
+			Subcat:   "",
 			Date:     "2022-07-22",
 			Time:     "17:00",
 			Info:     "",
@@ -166,6 +169,7 @@ func testMdbFunctions() {
 
 	fmt.Print("Step 4 - CreateConfigItem \n\n")
 	for _, item := range clist {
+		fmt.Println(item)
 		mdb.CreateConfigItem("shuva_raanana", item)
 	}
 

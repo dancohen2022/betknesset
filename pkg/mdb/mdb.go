@@ -2,7 +2,6 @@ package mdb
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -179,7 +178,14 @@ func ConfigItemFromRow(row *sql.Rows) (synagogues.ConfigItem, error) {
 		return c, err
 	}
 
-	_ = json.Unmarshal([]byte(info), &c)
+	c.Name = name
+	c.Hname = hname
+	c.Category = category
+	c.Subcat = subcat
+	c.Date = date
+	c.Time = time
+	c.Info = info
+	c.Active = active
 
 	return c, nil
 }
@@ -248,6 +254,7 @@ func CreateSynagogue(s synagogues.Synagogue) synagogues.Synagogue {
 //CREATE schedule rom schedule list
 func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues.ConfigItem {
 	fmt.Println("CreateConfigItem")
+	fmt.Println(c)
 	confItem := synagogues.ConfigItem{}
 
 	/*schedules
@@ -354,8 +361,8 @@ func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 
 	rows, err := db.Query(
 		`
-		SELECT id, synagogue_name , name , hname ,category 
-		subcat , date , time  info ,active
+		SELECT id, synagogue_name , name , hname ,category ,subcat , date , time, 
+		info ,active
 		FROM schedules
 		WHERE synagogue_name = ? AND date = ?
 		`, synagogueName, date)
@@ -398,8 +405,8 @@ func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
 
 	rows, err := db.Query(
 		`
-		SELECT id, synagogue_name , name , hname ,category 
-		subcat , date , time  info ,active
+		SELECT id, synagogue_name , name , hname ,category ,
+		subcat , date , time,  info ,active
 		FROM schedules
 		WHERE synagogue_name = ?
 		`, synagogueName)
