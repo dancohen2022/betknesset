@@ -68,15 +68,21 @@ func CreateDbTables() {
 	}
 
 	/*schedules
-	  id INTEGER NOT NULL PRIMARY KEY
-	  synagogue_name TEXT
-	  name TEXT
-	  date TEXT (2022-03-16)
-	  info string (json) //JSON with all the schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
 	*/
 	fmt.Println("sqlStmt = CREATE TABLE schedules")
 	sqlStmt = `
-		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, date TEXT, info TEXT);
+		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, hname TEXT,category TEXT
+			cubcat TEXT, date TEXT, time TEXT ,info TEXT, on bool)
 		`
 	// Execute the SQL statement
 	_, err = db.Exec(sqlStmt)
@@ -227,18 +233,22 @@ func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues
 	confItem := synagogues.ConfigItem{}
 
 	/*schedules
-	  id INTEGER NOT NULL PRIMARY KEY
-	  synagogue_name TEXT
-	  name TEXT
-	  date TEXT (2022-03-16)
-	  info string (json) //JSON with all the schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
 	*/
 
-	j, _ := json.Marshal(c)
-
-	sqlStmt := `INSERT INTO schedules (synagogue_name ,name, date, info)
-	VALUES(?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Date, j)
+	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category 
+		subcat , date , time  info ,on )
+	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c, c.Time, c.Info, c.On)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return confItem
@@ -313,16 +323,22 @@ func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
-	  id INTEGER NOT NULL PRIMARY KEY
-	  synagogue_name TEXTname TEXT
-	  name TEXT
-	  date TEXT (2022-03-16)
-	  info string (json) //JSON with all the schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
 	*/
 
 	rows, err := db.Query(
 		`
-		SELECT id, synagogue_name, name, date, info
+		SELECT id, synagogue_name , name , hname ,category 
+		subcat , date , time  info ,on 
 		FROM schedules
 		WHERE synagogue_name = ? AND date = ?
 		`, synagogueName, date)
@@ -345,22 +361,28 @@ func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 	return confItems
 }
 
-//GET ConfigItems BY synagogue name and date - return ConfigItem
+//GET ConfigItems BY synagogue name - return ConfigItem
 func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
 	fmt.Println("GetAllConfigItems")
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
-	  id INTEGER NOT NULL PRIMARY KEY
-	  synagogue_name TEXTname TEXT
-	  name TEXT
-	  date TEXT (2022-03-16)
-	  info string (json) //JSON with all the schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
 	*/
 
 	rows, err := db.Query(
 		`
-		SELECT id, synagogue_name, name, date, info
+		SELECT id, synagogue_name , name , hname ,category 
+		subcat , date , time  info ,on 
 		FROM schedules
 		WHERE synagogue_name = ?
 		`, synagogueName)
@@ -410,19 +432,23 @@ func UpdateConfigItem(synagogueName string, c synagogues.ConfigItem) []synagogue
 	configItems := []synagogues.ConfigItem{}
 
 	/*schedules
-	  id INTEGER NOT NULL PRIMARY KEY
-	  synagogue_name TEXT
-	  name TEXT
-	  date TEXT (2022-03-16)
-	  info string (json) //JSON with all the schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
 	*/
-	j, _ := json.Marshal(c)
 
 	sqlStmt := `
 	UPDATE schedules SET  info=?
 	WHERE synagogue_name = ? AND name = ? AND date = ?
 	`
-	_, err := db.Exec(sqlStmt, string(j), synagogueName, c.Name, c.Date)
+	_, err := db.Exec(sqlStmt, c.Info, synagogueName, c.Name, c.Date)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return configItems
@@ -462,10 +488,23 @@ func DeleteUser(name string) error {
 	return nil
 }
 
-//DELETE schedule BY synagogue_name, name, date
-//DELETE schedule BY date
 func DeleteSchedules(synagogue_name, name, date string) error {
 	fmt.Println("DeleteSchedules")
+
+	//DELETE schedule BY synagogue_name, name, date
+	//DELETE schedule BY date
+	/*schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	On       bool
+	*/
 
 	sqlStmt := `
 	DELETE FROM schedules

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/dancohen2022/betknesset/pkg/functions"
 	"github.com/dancohen2022/betknesset/pkg/mdb"
@@ -17,7 +18,7 @@ func main() {
 	///// OPEN DATABASE CONNECTION
 	// Remove the todo database file if exists.
 	// Comment out the below line if you don't want to remove the database.
-	//os.Remove(mdb.SYNAGOGUESDB)
+	os.Remove(mdb.SYNAGOGUESDB)
 	// Open database connection
 	db, err := sql.Open("sqlite3", mdb.SYNAGOGUESDB)
 	// Check if database connection was opened successfully
@@ -34,7 +35,7 @@ func main() {
 	// close database connection before exiting program.
 	mdb.SetDb(db)
 	defer db.Close()
-	//testMdbFunctions()
+	testMdbFunctions()
 	//testUpdateSynagogueSchedule()
 	testResetSynagogueSchedule()
 	/////
