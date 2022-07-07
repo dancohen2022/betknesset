@@ -9,14 +9,15 @@ import (
 )
 
 func ResetSynagogueSchedule(name string) bool {
+	fmt.Println("ResetSynagogueSchedule")
 	sList := mdb.GetAllSynagogues()
 	for _, s := range sList {
 		syn := s
 		if s.User.Name == name {
 			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
 			//Update API period and other constants
-			calend := UpdateApiParams(syn.CalendarApi)
-			zman := UpdateApiParams(syn.ZmanimApi)
+			calend := UpdateApiParamsPeriod(syn.CalendarApi)
+			zman := UpdateApiParamsPeriod(syn.ZmanimApi)
 
 			UpdateCalendarJSON(name, calend)
 			UpdateZmanimJSON(name, zman)
@@ -29,14 +30,15 @@ func ResetSynagogueSchedule(name string) bool {
 }
 
 func UpdateSynagogueSchedule(name string) bool {
+	fmt.Println("UpdateSynagogueSchedule")
 	sList := mdb.GetAllSynagogues()
 	for _, s := range sList {
 		syn := s
 		if s.User.Name == name {
 			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
 			//Update API period and other constants
-			calend := UpdateApiParams(syn.CalendarApi)
-			zman := UpdateApiParams(syn.ZmanimApi)
+			calend := UpdateApiParamsPeriod(syn.CalendarApi)
+			zman := UpdateApiParamsPeriod(syn.ZmanimApi)
 
 			UpdateCalendarJSON(name, calend)
 			UpdateZmanimJSON(name, zman)
@@ -65,6 +67,7 @@ func SynagogueExist(name, key string) (synagogues.Synagogue, error) {
 }
 
 func GetDefaultConfigItemsList() []synagogues.ConfigItem {
+	fmt.Println("GetDefaultConfigItemsList")
 	/*ConfigItem
 	Name     string `json:"name"`
 	Hname    string `json:"hname"`
@@ -95,24 +98,5 @@ func GetDefaultConfigItemsList() []synagogues.ConfigItem {
 	cIList = append(cIList, synagogues.ConfigItem{Name: "SpecialArvit1", Hname: "תפילת ערבית מיוחדת", Category: "tfilot", Date: "", Time: "222:00", Info: "תפילת ערבית מיוחדת", On: false})
 
 	return cIList
-
-}
-
-func GetLogoName(synName string) string {
-	return "logo_" + synName
-}
-func GetBackgroundName(synName string) string {
-	return "background_" + synName
-}
-
-func UpdateCalendarJSON(synName, calend string) {
-
-}
-
-func UpdateZmanimJSON(synName, zman string) {
-
-}
-
-func UpdateDefaultConfigItemsList(synName string) {
 
 }

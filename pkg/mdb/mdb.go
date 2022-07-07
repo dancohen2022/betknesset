@@ -18,13 +18,16 @@ const SYNAGOGUESDB = "synagogues.db"
 var db *sql.DB
 
 func GetDb() *sql.DB {
+	fmt.Println("GetDb")
 	return db
 }
 func SetDb(d *sql.DB) {
+	fmt.Println("SetDb")
 	db = d
 }
 
 func CreateDbTables() {
+	fmt.Println("CreateDbTables")
 
 	// both manager and synagogues are saved in the same users table
 
@@ -97,6 +100,7 @@ func CreateDbTables() {
 
 ////// OUTPUTS
 func SynagogueFromRow(row *sql.Rows) (synagogues.Synagogue, error) {
+	fmt.Println("SynagogueFromRow")
 
 	s := synagogues.Synagogue{}
 
@@ -134,6 +138,7 @@ func SynagogueFromRow(row *sql.Rows) (synagogues.Synagogue, error) {
 }
 
 func ConfigItemFromRow(row *sql.Rows) (synagogues.ConfigItem, error) {
+	fmt.Println("ConfigItemFromRow")
 
 	c := synagogues.ConfigItem{}
 
@@ -160,6 +165,7 @@ func ConfigItemFromRow(row *sql.Rows) (synagogues.ConfigItem, error) {
 
 //ADD Manager (synagogue)
 func CreateManager(u synagogues.User) synagogues.User {
+	fmt.Println("CreateManager")
 
 	user := synagogues.User{}
 
@@ -188,6 +194,7 @@ func CreateManager(u synagogues.User) synagogues.User {
 
 //ADD SYNAGOGUE (synagogue)
 func CreateSynagogue(s synagogues.Synagogue) synagogues.Synagogue {
+	fmt.Println("CreateSynagogue")
 
 	synagogue := synagogues.Synagogue{}
 
@@ -216,6 +223,7 @@ func CreateSynagogue(s synagogues.Synagogue) synagogues.Synagogue {
 
 //CREATE schedule rom schedule list
 func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues.ConfigItem {
+	fmt.Println("CreateConfigItem")
 	confItem := synagogues.ConfigItem{}
 
 	/*schedules
@@ -244,6 +252,7 @@ func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues
 
 //GET Synagogues BY User name and key - return []Synagogue but only 1 item
 func GetSynagogue(name string, key string, typ string, active bool) []synagogues.Synagogue {
+	fmt.Println("GetSynagogue")
 	synagogues := []synagogues.Synagogue{}
 	rows, err := db.Query(
 		`
@@ -272,11 +281,12 @@ func GetSynagogue(name string, key string, typ string, active bool) []synagogues
 
 //GET all users (synagogues format) - return slice of users
 func GetAllSynagogues() []synagogues.Synagogue {
+	fmt.Println("GetAllSynagogues")
 	synagogues := []synagogues.Synagogue{}
 	rows, err := db.Query(
 		`
 		SELECT id, name, key, type, active, config, zmanimApi, calendarApi, logo, background
-		FROM users
+		FROM users;
 		`)
 
 	if err != nil {
@@ -299,6 +309,7 @@ func GetAllSynagogues() []synagogues.Synagogue {
 
 //GET ConfigItems BY synagogue name and date - return ConfigItem
 func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
+	fmt.Println("GetConfigItems")
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -336,6 +347,7 @@ func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 
 //GET ConfigItems BY synagogue name and date - return ConfigItem
 func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
+	fmt.Println("GetAllConfigItems")
 	confItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -375,6 +387,7 @@ func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
 
 // UPDATE  user and synagogue manager return user
 func UpdateSynagogue(s synagogues.Synagogue) []synagogues.Synagogue {
+	fmt.Println("UpdateSynagogue")
 	synagogues := []synagogues.Synagogue{}
 	sqlStmt := `
 	UPDATE users SET  key=?, type=?, active=?, config=?, zmanimApi=?, calendarApi=?, logo=?, background=?
@@ -393,6 +406,7 @@ func UpdateSynagogue(s synagogues.Synagogue) []synagogues.Synagogue {
 // UPDATE  schedule BY date - return schedule
 
 func UpdateConfigItem(synagogueName string, c synagogues.ConfigItem) []synagogues.ConfigItem {
+	fmt.Println("UpdateConfigItem")
 	configItems := []synagogues.ConfigItem{}
 
 	/*schedules
@@ -420,6 +434,7 @@ func UpdateConfigItem(synagogueName string, c synagogues.ConfigItem) []synagogue
 /////// DELETE
 // DELETE user BY name
 func DeleteUser(name string) error {
+	fmt.Println("DeleteUser")
 	if name == "" {
 		name = "*"
 	}
@@ -450,6 +465,7 @@ func DeleteUser(name string) error {
 //DELETE schedule BY synagogue_name, name, date
 //DELETE schedule BY date
 func DeleteSchedules(synagogue_name, name, date string) error {
+	fmt.Println("DeleteSchedules")
 
 	sqlStmt := `
 	DELETE FROM schedules
@@ -465,6 +481,7 @@ func DeleteSchedules(synagogue_name, name, date string) error {
 }
 
 func DeleteAllSchedulesByName(synagogue_name, name string) error {
+	fmt.Println("DeleteAllSchedulesByName")
 
 	sqlStmt := `
 	DELETE FROM schedules
@@ -480,6 +497,7 @@ func DeleteAllSchedulesByName(synagogue_name, name string) error {
 }
 
 func DeleteAllSchedulesByDate(synagogue_name, date string) error {
+	fmt.Println("DeleteAllSchedulesByDate")
 
 	sqlStmt := `
 	DELETE FROM schedules
@@ -495,6 +513,7 @@ func DeleteAllSchedulesByDate(synagogue_name, date string) error {
 }
 
 func DeleteAllSynagogueSchedules(synagogue_name string) error {
+	fmt.Println("DeleteAllSynagogueSchedules")
 
 	sqlStmt := `
 	DELETE FROM schedules

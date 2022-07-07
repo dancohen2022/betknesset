@@ -1,24 +1,44 @@
 package synagogues
 
+import (
+	"fmt"
+	"strings"
+	"time"
+)
+
 func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
+	fmt.Println("ParseCalendarItemsToConfigItems")
 	newList := []ConfigItem{}
 	for _, item := range cList {
 		var c ConfigItem
 		c.Category = item.Category
-		c.Date = item.Date
+		c.Date = DateFormat(item.Date)
 		c.Hname = item.Hebrew
 		c.Info = item.Memo
 		c.Name = item.Title
 		c.Subcat = item.Subcat
 		c.Time = ""
 		c.On = true
+
+		fmt.Printf("c: %v\n", c)
+		fmt.Printf("c.Date: %v\n", c.Date)
+		fmt.Printf("c.Name: %v\n", c.Name)
+		fmt.Printf("c.Hname: %v\n", c.Hname)
+		fmt.Printf("c.Info: %v\n", c.Info)
+		fmt.Printf("c.Category: %v\n", c.Category)
+		fmt.Printf("c.Subcat: %v\n", c.Subcat)
+		fmt.Printf("c.Time: %v\n", c.Time)
+		fmt.Printf("c.On: %v\n", c.On)
+
 		newList = append(newList, c)
 	}
+	//fmt.Printf("newList: %v\n", newList)
 	return newList
 }
 
 func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
-	lst := []ConfigItem{}
+	fmt.Println("ParseZmanimJsonToConfigItems")
+	newList := []ConfigItem{}
 	timesMap := GetItemsTimeMap(zm.Times)
 
 	for key1, val1 := range timesMap {
@@ -35,14 +55,25 @@ func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
 			d.Subcat = ""
 			d.Time = v
 			d.On = true
-			lst = append(lst, d)
+			fmt.Printf("d: %v\n", d)
+			fmt.Printf("d.Name: %v\n", d.Name)
+			fmt.Printf("d.Date: %v\n", d.Date)
+			fmt.Printf("d.Hname: %v\n", d.Hname)
+			fmt.Printf("d.Info: %v\n", d.Info)
+			fmt.Printf("d.Category: %v\n", d.Category)
+			fmt.Printf("d.Subcat: %v\n", d.Subcat)
+			fmt.Printf("d.Time: %v\n", d.Time)
+			fmt.Printf("d.On: %v\n", d.On)
+			newList = append(newList, d)
 		}
 	}
+	//fmt.Printf("newList: %v\n", newList)
 
-	return lst
+	return newList
 }
 
 func GetItemsTimeMap(Times ZmanimTimes) map[string]map[string]string {
+	fmt.Println("GetItemsTimeMap")
 	timesMap := make(map[string]map[string]string)
 	timesMap["ChatzotNight"] = Times.ChatzotNight
 	timesMap["AlotHaShachar"] = Times.AlotHaShachar
@@ -70,6 +101,7 @@ func GetItemsTimeMap(Times ZmanimTimes) map[string]map[string]string {
 }
 
 func SetHebrewName(name string) string {
+	fmt.Println("SetHebrewName")
 	switch name {
 	case "ChatzotNight":
 		return "חצות הלילה"
@@ -116,4 +148,34 @@ func SetHebrewName(name string) string {
 	default:
 		return "זמנים"
 	}
+}
+
+const PERIOD int = 3 //7
+
+func UpdateApiParamsPeriod(api string) string {
+	fmt.Println("UpdateApiParams")
+	fmt.Printf("api: %s \n", api)
+
+	//Files limited period
+
+	bStart := DateFormat(time.Now().String())
+	bEnd := DateFormat(time.Now().AddDate(0, 0, PERIOD).String())
+	periodStart := strings.TrimSpace(fmt.Sprintf("start=%s", bStart))
+	periodEnd := fmt.Sprintf("end=%s", bEnd)
+	newPeriod := fmt.Sprintf("&%s&%s", periodStart, periodEnd)
+	newApi := strings.Replace(api, "&year=now", "", 3)
+	newApiTrimes := strings.TrimSpace(newApi + newPeriod)
+	fmt.Printf("newApiTrimes: %s \n", newApiTrimes)
+
+	return newApiTrimes
+
+}
+
+func DateFormat(dateString string) string {
+	fmt.Println("DateFormat")
+	//YYYY-MM-DD
+	d := []byte(dateString)
+	d = d[:11]
+	s := string(d)
+	return s
 }

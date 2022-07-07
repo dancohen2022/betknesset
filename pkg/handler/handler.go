@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/dancohen2022/betknesset/pkg/functions"
+	"github.com/dancohen2022/betknesset/pkg/synagogues"
 	"github.com/gorilla/mux"
 )
 
@@ -58,8 +59,8 @@ func SynagoguePage(res http.ResponseWriter, req *http.Request) {
 		resString = fmt.Sprintf("<h1>name is: %s and key is: %s</h1>\n", name, key)
 		resString = fmt.Sprintf("Synagogue %v", s)
 
-		calend := functions.UpdateApiParams(s.CalendarApi)
-		zman := functions.UpdateApiParams(s.ZmanimApi)
+		calend := synagogues.UpdateParamsPeriod(s.CalendarApi)
+		zman := synagogues.UpdateParamsPeriod(s.ZmanimApi)
 		fmt.Println(calend)
 		fmt.Println(zman)
 
