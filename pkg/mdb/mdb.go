@@ -77,13 +77,14 @@ func CreateDbTables() {
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active       bool
 	*/
 	fmt.Println("sqlStmt = CREATE TABLE schedules")
 	sqlStmt = `
-		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, name TEXT, hname TEXT,category TEXT,
-			subcat TEXT, date TEXT, time TEXT ,info TEXT, on BOOLEAN)
-		`
+		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, 
+			name TEXT, hname TEXT,category TEXT, subcat TEXT, date TEXT, time TEXT,
+			info TEXT, active BOOLEAN);
+	`
 	// Execute the SQL statement
 	_, err = db.Exec(sqlStmt)
 
@@ -242,12 +243,12 @@ func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active      bool
 	*/
 
-	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category ,subcat , date , time , info ,on )
+	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category ,subcat , date , time , info ,on) 
 	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c.Time, c.Info, c.On)
+	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c.Time, c.Info, c.Active)
 	if err != nil {
 		log.Printf("%q: %s\n", err, sqlStmt)
 		return confItem
@@ -331,13 +332,13 @@ func GetConfigItems(synagogueName string, date string) []synagogues.ConfigItem {
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active      bool
 	*/
 
 	rows, err := db.Query(
 		`
 		SELECT id, synagogue_name , name , hname ,category 
-		subcat , date , time  info ,on 
+		subcat , date , time  info ,active
 		FROM schedules
 		WHERE synagogue_name = ? AND date = ?
 		`, synagogueName, date)
@@ -375,13 +376,13 @@ func GetAllConfigItems(synagogueName string) []synagogues.ConfigItem {
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active      bool
 	*/
 
 	rows, err := db.Query(
 		`
 		SELECT id, synagogue_name , name , hname ,category 
-		subcat , date , time  info ,on 
+		subcat , date , time  info ,active
 		FROM schedules
 		WHERE synagogue_name = ?
 		`, synagogueName)
@@ -440,7 +441,7 @@ func UpdateConfigItem(synagogueName string, c synagogues.ConfigItem) []synagogue
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active      bool
 	*/
 
 	sqlStmt := `
@@ -502,7 +503,7 @@ func DeleteSchedules(synagogue_name, name, date string) error {
 	Date     TEXT
 	Time     TEXT
 	Info     TEXT
-	On       bool
+	Active       bool
 	*/
 
 	sqlStmt := `

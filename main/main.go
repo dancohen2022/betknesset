@@ -35,7 +35,11 @@ func main() {
 	// close database connection before exiting program.
 	mdb.SetDb(db)
 	defer db.Close()
-	testMdbFunctions()
+
+	fmt.Print("Step 1 - CreateDBTables \n\n")
+	mdb.CreateDbTables()
+
+	//testMdbFunctions()
 	//testUpdateSynagogueSchedule()
 	//testResetSynagogueSchedule()
 	/////
@@ -139,7 +143,7 @@ func testMdbFunctions() {
 			Date:     "",
 			Time:     "18:00",
 			Info:     "",
-			On:       true,
+			Active:   true,
 		},
 		{
 			Name:     "minha hag",
@@ -148,12 +152,9 @@ func testMdbFunctions() {
 			Date:     "2022-07-22",
 			Time:     "17:00",
 			Info:     "",
-			On:       true,
+			Active:   true,
 		},
 	}
-
-	fmt.Print("Step 1 - CreateDBTables \n\n")
-	mdb.CreateDbTables()
 
 	fmt.Print("Step 2 - CreateManager \n\n")
 	mdb.CreateManager(u)

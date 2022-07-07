@@ -18,7 +18,7 @@ func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
 		c.Name = item.Title
 		c.Subcat = item.Subcat
 		c.Time = ""
-		c.On = true
+		c.Active = true
 
 		fmt.Printf("c: %v\n", c)
 		fmt.Printf("c.Date: %v\n", c.Date)
@@ -28,7 +28,7 @@ func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
 		fmt.Printf("c.Category: %v\n", c.Category)
 		fmt.Printf("c.Subcat: %v\n", c.Subcat)
 		fmt.Printf("c.Time: %v\n", c.Time)
-		fmt.Printf("c.On: %v\n", c.On)
+		fmt.Printf("c.Active: %v\n", c.Active)
 
 		newList = append(newList, c)
 	}
@@ -54,7 +54,7 @@ func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
 			d.Name = name
 			d.Subcat = ""
 			d.Time = v
-			d.On = true
+			d.Active = true
 			fmt.Printf("d: %v\n", d)
 			fmt.Printf("d.Name: %v\n", d.Name)
 			fmt.Printf("d.Date: %v\n", d.Date)
@@ -63,7 +63,7 @@ func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
 			fmt.Printf("d.Category: %v\n", d.Category)
 			fmt.Printf("d.Subcat: %v\n", d.Subcat)
 			fmt.Printf("d.Time: %v\n", d.Time)
-			fmt.Printf("d.On: %v\n", d.On)
+			fmt.Printf("d.On: %v\n", d.Active)
 			newList = append(newList, d)
 		}
 	}

@@ -30,7 +30,7 @@ type ConfigItem struct {
 	Date     string `json:"date"`
 	Time     string `json:"time"`
 	Info     string `json:"info"`
-	On       bool   `json:"on"`
+	Active   bool   `json:"on"`
 }
 
 /////////
