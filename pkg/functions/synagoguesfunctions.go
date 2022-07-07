@@ -16,8 +16,8 @@ func ResetSynagogueSchedule(name string) bool {
 		if s.User.Name == name {
 			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
 			//Update API period and other constants
-			calend := UpdateApiParamsPeriod(syn.CalendarApi)
-			zman := UpdateApiParamsPeriod(syn.ZmanimApi)
+			calend := synagogues.UpdateParamsPeriod(syn.CalendarApi)
+			zman := synagogues.UpdateParamsPeriod(syn.ZmanimApi)
 
 			UpdateCalendarJSON(name, calend)
 			UpdateZmanimJSON(name, zman)
@@ -37,8 +37,8 @@ func UpdateSynagogueSchedule(name string) bool {
 		if s.User.Name == name {
 			mdb.DeleteAllSynagogueSchedules(syn.User.Name)
 			//Update API period and other constants
-			calend := UpdateApiParamsPeriod(syn.CalendarApi)
-			zman := UpdateApiParamsPeriod(syn.ZmanimApi)
+			calend := synagogues.UpdateParamsPeriod(syn.CalendarApi)
+			zman := synagogues.UpdateParamsPeriod(syn.ZmanimApi)
 
 			UpdateCalendarJSON(name, calend)
 			UpdateZmanimJSON(name, zman)

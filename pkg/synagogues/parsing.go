@@ -152,7 +152,7 @@ func SetHebrewName(name string) string {
 
 const PERIOD int = 3 //7
 
-func UpdateApiParamsPeriod(api string) string {
+func UpdateParamsPeriod(api string) string {
 	fmt.Println("UpdateApiParams")
 	fmt.Printf("api: %s \n", api)
 
