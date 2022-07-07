@@ -39,7 +39,7 @@ func main() {
 	fmt.Print("Step 1 - CreateDBTables \n\n")
 	mdb.CreateDbTables()
 
-	//testMdbFunctions()
+	testMdbFunctions()
 	//testUpdateSynagogueSchedule()
 	//testResetSynagogueSchedule()
 	/////

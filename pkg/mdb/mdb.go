@@ -149,13 +149,30 @@ func ConfigItemFromRow(row *sql.Rows) (synagogues.ConfigItem, error) {
 
 	c := synagogues.ConfigItem{}
 
+	/*schedules
+	id INTEGER NOT NULL PRIMARY KEY
+	synagogue_name TEXT
+	Name     TEXT
+	Hname    TEXT
+	Category TEXT
+	Subcat   TEXT
+	Date     TEXT
+	Time     TEXT
+	Info     TEXT
+	Active      bool
+	*/
 	var id int64
 	var synagogue_name string
 	var name string
+	var hname string
+	var category string
+	var subcat string
 	var date string // (2022-03-16)
+	var time string
 	var info string //(json) //JSON with all the schedules
+	var active bool
 
-	err := row.Scan(&id, &synagogue_name, &name, &date, &info)
+	err := row.Scan(&id, &synagogue_name, &name, &hname, &category, &subcat, &date, &time, &info, &active)
 
 	if err != nil {
 		log.Println(err)
@@ -246,7 +263,7 @@ func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues
 	Active      bool
 	*/
 
-	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category ,subcat , date , time , info ,on) 
+	sqlStmt := `INSERT INTO schedules (synagogue_name , name , hname ,category ,subcat , date , time , info ,active) 
 	VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := db.Exec(sqlStmt, synagogue_name, c.Name, c.Hname, c.Category, c.Subcat, c.Date, c.Time, c.Info, c.Active)
 	if err != nil {
