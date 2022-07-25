@@ -78,7 +78,7 @@ func CreateDbTables() {
 	Info     TEXT
 	Active       bool
 	*/
-	fmt.Println("sqlStmt = CREATE TABLE schedules")
+	//fmt.Println("sqlStmt = CREATE TABLE schedules")
 	sqlStmt = `
 		CREATE TABLE schedules (id INTEGER NOT NULL PRIMARY KEY, synagogue_name TEXT, 
 			name TEXT, hname TEXT,category TEXT, subcat TEXT, date TEXT, time TEXT,
@@ -97,7 +97,7 @@ func CreateDbTables() {
 			log.Fatal(err)
 		}
 	}
-	fmt.Println("sqlStmt = CREATE TABLE schedules SUCCEEDED")
+	//fmt.Println("sqlStmt = CREATE TABLE schedules SUCCEEDED")
 
 	//`
 	//DELETE FROM schedules;
@@ -254,7 +254,7 @@ func CreateSynagogue(s synagogues.Synagogue) synagogues.Synagogue {
 //CREATE schedule rom schedule list
 func CreateConfigItem(synagogue_name string, c synagogues.ConfigItem) synagogues.ConfigItem {
 	fmt.Println("CreateConfigItem")
-	fmt.Println(c)
+	//fmt.Println(c)
 	confItem := synagogues.ConfigItem{}
 
 	/*schedules

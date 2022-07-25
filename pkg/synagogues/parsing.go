@@ -10,6 +10,7 @@ func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
 	fmt.Println("ParseCalendarItemsToConfigItems")
 	newList := []ConfigItem{}
 	for _, item := range cList {
+		fmt.Printf("it: %v\n", item)
 		var c ConfigItem
 		c.Category = item.Category
 		c.Date = DateFormat(item.Date)
@@ -19,17 +20,18 @@ func ParseCalendarItemsToConfigItems(cList []CalendarItems) []ConfigItem {
 		c.Subcat = item.Subcat
 		c.Time = ""
 		c.Active = true
-
 		fmt.Printf("c: %v\n", c)
-		fmt.Printf("c.Date: %v\n", c.Date)
-		fmt.Printf("c.Name: %v\n", c.Name)
-		fmt.Printf("c.Hname: %v\n", c.Hname)
-		fmt.Printf("c.Info: %v\n", c.Info)
-		fmt.Printf("c.Category: %v\n", c.Category)
-		fmt.Printf("c.Subcat: %v\n", c.Subcat)
-		fmt.Printf("c.Time: %v\n", c.Time)
-		fmt.Printf("c.Active: %v\n", c.Active)
-
+		/*
+			fmt.Printf("c: %v\n", c)
+			fmt.Printf("c.Date: %v\n", c.Date)
+			fmt.Printf("c.Name: %v\n", c.Name)
+			fmt.Printf("c.Hname: %v\n", c.Hname)
+			fmt.Printf("c.Info: %v\n", c.Info)
+			fmt.Printf("c.Category: %v\n", c.Category)
+			fmt.Printf("c.Subcat: %v\n", c.Subcat)
+			fmt.Printf("c.Time: %v\n", c.Time)
+			fmt.Printf("c.Active: %v\n", c.Active)
+		*/
 		newList = append(newList, c)
 	}
 	//fmt.Printf("newList: %v\n", newList)
@@ -55,15 +57,17 @@ func ParseZmanimJsonToConfigItems(zm ZmanimJson) []ConfigItem {
 			d.Subcat = ""
 			d.Time = v
 			d.Active = true
-			fmt.Printf("d: %v\n", d)
-			fmt.Printf("d.Name: %v\n", d.Name)
-			fmt.Printf("d.Date: %v\n", d.Date)
-			fmt.Printf("d.Hname: %v\n", d.Hname)
-			fmt.Printf("d.Info: %v\n", d.Info)
-			fmt.Printf("d.Category: %v\n", d.Category)
-			fmt.Printf("d.Subcat: %v\n", d.Subcat)
-			fmt.Printf("d.Time: %v\n", d.Time)
-			fmt.Printf("d.On: %v\n", d.Active)
+			/*
+				fmt.Printf("d: %v\n", d)
+				fmt.Printf("d.Name: %v\n", d.Name)
+				fmt.Printf("d.Date: %v\n", d.Date)
+				fmt.Printf("d.Hname: %v\n", d.Hname)
+				fmt.Printf("d.Info: %v\n", d.Info)
+				fmt.Printf("d.Category: %v\n", d.Category)
+				fmt.Printf("d.Subcat: %v\n", d.Subcat)
+				fmt.Printf("d.Time: %v\n", d.Time)
+				fmt.Printf("d.On: %v\n", d.Active)
+			*/
 			newList = append(newList, d)
 		}
 	}
@@ -174,8 +178,10 @@ func UpdateParamsPeriod(api string) string {
 func DateFormat(dateString string) string {
 	fmt.Println("DateFormat")
 	//YYYY-MM-DD
+	//fmt.Printf("dateString: %s\n", dateString)
 	d := []byte(dateString)
-	d = d[:11]
+	d = d[:10]
 	s := string(d)
+	//fmt.Printf("s: %s\n", s)
 	return s
 }

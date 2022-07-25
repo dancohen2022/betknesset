@@ -169,12 +169,13 @@ func testMdbFunctions() {
 
 	fmt.Print("Step 4 - CreateConfigItem \n\n")
 	for _, item := range clist {
-		fmt.Println(item)
+		//fmt.Println(item)
 		mdb.CreateConfigItem("shuva_raanana", item)
 	}
 
 	fmt.Print("Step 5 - GetAllSynagogues \n\n")
 	newSList := mdb.GetAllSynagogues()
+
 	for _, item := range newSList {
 		fmt.Println(item)
 	}

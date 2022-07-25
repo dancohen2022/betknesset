@@ -72,13 +72,13 @@ func GetBackgroundName(synName string) string {
 func UpdateCalendarJSON(synName, calendAPI string) {
 	fmt.Println("UpdateCalendarJSON")
 	jByte := GetSynagogueHttpJson(calendAPI)
-	fmt.Printf("jByte: %s\n", string(jByte))
+	//fmt.Printf("jByte: %s\n", string(jByte))
 	calJson := synagogues.CalendarJson{}
 	err := json.Unmarshal(jByte, &calJson)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Printf("calJson: %v\n", calJson)
+	//fmt.Printf("calJson: %v\n", calJson)
 	cnfItemList := synagogues.ParseCalendarItemsToConfigItems(calJson.Items)
 
 	for _, item := range cnfItemList {
@@ -89,13 +89,13 @@ func UpdateCalendarJSON(synName, calendAPI string) {
 func UpdateZmanimJSON(synName, zmanAPI string) {
 	fmt.Println("UpdateZmanimJSON")
 	jByte := GetSynagogueHttpJson(zmanAPI)
-	fmt.Printf("jByte: %s\n", string(jByte))
+	//fmt.Printf("jByte: %s\n", string(jByte))
 	zmanJson := synagogues.ZmanimJson{}
 	err := json.Unmarshal(jByte, &zmanJson)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Printf("zmanJson: %v\n", zmanJson)
+	//fmt.Printf("zmanJson: %v\n", zmanJson)
 	cnfItemList := synagogues.ParseZmanimJsonToConfigItems(zmanJson)
 	for _, item := range cnfItemList {
 		mdb.CreateConfigItem(synName, item)
